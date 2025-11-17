@@ -1,39 +1,19 @@
-# 1. Python 3.10-slim 버전
+# Python 3.10-slim 버전
 FROM python:3.10-slim
 
-# 2. 작업 디렉토리
+# 작업 디렉토리
 WORKDIR /app
 
-# 3. requirements.txt를 먼저 복사하여 종속성 캐싱 활용
+# requirements.txt 복사 및 설치
 COPY requirements.txt .
-
-# 4. 패키지 설치
+# 패키지 설치 
 RUN pip install --no-cache-dir -r requirements.txt
 
-# 5. 나머지 소스 코드 복사
-# (docker-compose에서 볼륨 마운트 시 이 코드는 덮어씌워지지만,
-#  이미지 자체 빌드를 위해 포함하는 것이 좋습니다.)
+# 소스 코드 복사
 COPY . .
 
-# 5.1 개발용 기본 환경 변수 정의
-# 이 값들은 docker-compose.yml 또는 run 명령어의 -e 플래그로 재정의(override)할 수 있습니다.
-# FastAPI 앱이 이 변수들을 사용하도록 코딩되어야 합니다.
-# 'db'는 docker-compose에서 사용할 PostgreSQL 서비스의 기본 호스트명입니다.
-ENV POSTGRES_USER="chosun"
-ENV POSTGRES_PASSWORD="password"
-ENV POSTGRES_DB="weatherdb"
-ENV POSTGRES_HOST="db"
-ENV POSTGRES_PORT="5432"
-# SQLAlchemy 등에서 사용할 전체 접속 URL
-ENV DATABASE_URL="postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}"
-# API키
-ENV API_KEY = ""
-
-# 6. 앱이 사용할 포트 (기본 8000)
+# 앱이 사용할 포트
 EXPOSE 8000
 
-# 7. Uvicorn을 사용하여 개발 서버 실행 (수정됨)
-#    --host 0.0.0.0 : 컨테이너 외부에서 접근 허용
-#    --port 8000 : 8000번 포트 사용
-#    --reload : 소스 코드가 변경될 때마다 서버 자동 재시작
-CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+# Uvicorn 실행 (main:app)
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]

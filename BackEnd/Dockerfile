@@ -25,5 +25,5 @@ EXPOSE 8000
 #    -k uvicorn.workers.UvicornWorker : Uvicorn을 워커로 지정 (ASGI 실행)
 #     -b 0.0.0.0:8000 : 모든 인터페이스의 8000번 포트로 바인딩
 #     -w 4 : 워커 프로세스 4개 (CPU 코어 수에 따라 조절)
-#     app:app : app.py 파일의 app 객체를 실행
-CMD ["gunicorn", "-k", "uvicorn.workers.UvicornWorker", "-b", "0.0.0.0:8000", "-w", "4", "app:app"]
+#     main:app : main.py 파일의 app 객체를 실행
+CMD ["gunicorn", "-k", "uvicorn.workers.UvicornWorker", "-b", "0.0.0.0:8000", "-w", "4", "main:app"]

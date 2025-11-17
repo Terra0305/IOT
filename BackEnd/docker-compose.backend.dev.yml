@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./:/app  # 소스 코드 실시간 반영을 위한 볼륨 마운트
+    env_file:
+      - .env     # [핵심] .env 파일의 내용을 환경 변수로 주입
+    depends_on:
+      - db
+
+  db:
+    image: postgres:13
+    env_file:
+      - .env     # DB 컨테이너도 같은 변수(USER, PASSWORD 등)를 공유
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
