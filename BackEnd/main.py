@@ -2,12 +2,28 @@ import os
 import httpx  # API 요청을 위한 라이브러리
 from fastapi import FastAPI, HTTPException
 from dotenv import load_dotenv  # .env 파일을 읽기 위함
+from contextlib import asynccontextmanager
 from datetime import datetime, timedelta  # base_time 계산용 (timedelta 추가)
+from database import init_db
 
 # .env 파일에서 환경 변수 로드
 load_dotenv()
-
-app = FastAPI()
+# 1. Lifespan(수명 주기) 정의
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # [시작될 때 실행] == Flask의 init_db() 부분
+    try:
+        init_db() 
+        print("[성공] 데이터베이스 테이블이 초기화되었습니다.")
+    except Exception as e:
+        print(f"[경고] 데이터베이스 초기화 실패: {e}")
+    
+    yield  # 여기서 앱이 실행됨 (Run)
+    
+    # [종료될 때 실행] (필요하다면 DB 연결 종료 등)
+    print("앱이 종료됩니다.")
+# 2. 앱 생성 시 lifespan 등록
+app = FastAPI(lifespan=lifespan)
 
 # 기상청 API URL 및 인증 키
 # [수정됨] 기상자료개방포털(apihub.kma.go.kr) URL로 변경
@@ -16,6 +32,8 @@ AUTH_KEY = os.getenv("WEATHER_API_KEY")
 
 if not AUTH_KEY:
     raise RuntimeError("WEATHER_API_KEY가 .env 파일에 설정되지 않았습니다!")
+
+
 
 @app.get("/api/weather")
 async def get_weather(nx: int = 60, ny: int = 127):  # 기본값: 서울특별시 (예시)
