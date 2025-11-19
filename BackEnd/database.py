@@ -24,5 +24,5 @@ def get_db():
 
 def init_db():
     """데이터베이스 테이블 초기화"""
-    from models.weather import Weather
+    from models.weather import HourlyForecast, WeeklyForecast, Dust, UV
     Base.metadata.create_all(bind=engine)
