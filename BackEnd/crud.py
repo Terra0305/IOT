@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from models.weather import HourlyForecast, WeeklyForecast, Dust, UV
-from schemas.weather import HourlyForecastCreate, DustCreate, UVCreate
+from schemas.weather import HourlyForecastCreate, DustCreate, UVCreate, WeeklyForecastCreate
 
 # --- Hourly Forecast ---
 def create_hourly_forecast(db: Session, forecast: HourlyForecastCreate):
