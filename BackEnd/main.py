@@ -6,7 +6,7 @@ from routers import weather
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from services import kma_service, airkorea_service
 from database import get_db, SessionLocal
-from schemas.weather import HourlyForecastCreate, DustCreate
+from schemas.weather import HourlyForecastCreate, DustCreate, WeeklyForecastCreate, UVCreate
 import crud
 import asyncio
 
@@ -51,6 +51,40 @@ async def scheduled_dust_log():
     except Exception as e:
         print(f"[Scheduler] Error fetching dust: {e}")
 
+async def scheduled_weekly_log():
+    """주기적으로 주간 예보 데이터를 수집하여 DB에 저장하는 작업 (하루 2회 권장)"""
+    print("[Scheduler] Fetching weekly weather data...")
+    try:
+        db = SessionLocal()
+        try:
+            # 서울/경기 기준
+            regId_temp = "11B10101"
+            regId_land = "11B00000"
+            data = await kma_service.fetch_mid_term_forecast(regId_temp, regId_land)
+            weekly_create = WeeklyForecastCreate(**data)
+            crud.create_weekly_forecast(db, weekly_create)
+            print("[Scheduler] Weekly weather data saved.")
+        finally:
+            db.close()
+    except Exception as e:
+        print(f"[Scheduler] Error fetching weekly weather: {e}")
+
+async def scheduled_uv_log():
+    """주기적으로 자외선 데이터를 수집하여 DB에 저장하는 작업"""
+    print("[Scheduler] Fetching UV data...")
+    try:
+        db = SessionLocal()
+        try:
+            areaNo = "1100000000" # 서울
+            data = await kma_service.fetch_uv_index(areaNo)
+            uv_create = UVCreate(**data)
+            crud.create_uv(db, uv_create)
+            print("[Scheduler] UV data saved.")
+        finally:
+            db.close()
+    except Exception as e:
+        print(f"[Scheduler] Error fetching UV: {e}")
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # [시작]
@@ -64,6 +98,10 @@ async def lifespan(app: FastAPI):
     # 1시간마다 실행 (예시)
     scheduler.add_job(scheduled_weather_log, 'interval', minutes=60)
     scheduler.add_job(scheduled_dust_log, 'interval', minutes=60)
+    # 중기예보와 자외선은 갱신 주기가 길므로 3시간마다 실행 (예시)
+    scheduler.add_job(scheduled_weekly_log, 'interval', minutes=180)
+    scheduler.add_job(scheduled_uv_log, 'interval', minutes=180)
+    
     scheduler.start()
     print("[System] Scheduler Started.")
     

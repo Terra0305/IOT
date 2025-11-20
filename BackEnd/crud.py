@@ -76,3 +76,26 @@ def get_latest_uv(db: Session, area_no: str):
     return db.query(UV).filter(
         UV.areaNo == area_no
     ).order_by(UV.date.desc()).first()
+
+# --- Weekly Forecast ---
+def create_weekly_forecast(db: Session, forecast: WeeklyForecastCreate):
+    db_obj = db.query(WeeklyForecast).filter(
+        WeeklyForecast.tmFc == forecast.tmFc,
+        WeeklyForecast.regId == forecast.regId
+    ).first()
+
+    if db_obj:
+        for key, value in forecast.dict().items():
+            setattr(db_obj, key, value)
+    else:
+        db_obj = WeeklyForecast(**forecast.dict())
+        db.add(db_obj)
+    
+    db.commit()
+    db.refresh(db_obj)
+    return db_obj
+
+def get_latest_weekly_forecast(db: Session, reg_id: str):
+    return db.query(WeeklyForecast).filter(
+        WeeklyForecast.regId == reg_id
+    ).order_by(WeeklyForecast.tmFc.desc()).first()
