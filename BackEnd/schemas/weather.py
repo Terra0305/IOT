@@ -31,61 +31,13 @@ class HourlyForecastResponse(HourlyForecastBase):
 class WeeklyForecastBase(BaseModel):
     tmFc: str
     regId: str
-    # 1일 후
-    rnSt1Am: Optional[int] = None
-    rnSt1Pm: Optional[int] = None
-    wf1Am: Optional[str] = None
-    wf1Pm: Optional[str] = None
-    taMin1: Optional[int] = None
-    taMax1: Optional[int] = None
-
-    # 2일 후
-    rnSt2Am: Optional[int] = None
-    rnSt2Pm: Optional[int] = None
-    wf2Am: Optional[str] = None
-    wf2Pm: Optional[str] = None
-    taMin2: Optional[int] = None
-    taMax2: Optional[int] = None
-
-    # 3일 후
     rnSt3Am: Optional[int] = None
     rnSt3Pm: Optional[int] = None
     wf3Am: Optional[str] = None
     wf3Pm: Optional[str] = None
     taMin3: Optional[int] = None
     taMax3: Optional[int] = None
-
-    # 4일 후
-    rnSt4Am: Optional[int] = None
-    rnSt4Pm: Optional[int] = None
-    wf4Am: Optional[str] = None
-    wf4Pm: Optional[str] = None
-    taMin4: Optional[int] = None
-    taMax4: Optional[int] = None
-
-    # 5일 후
-    rnSt5Am: Optional[int] = None
-    rnSt5Pm: Optional[int] = None
-    wf5Am: Optional[str] = None
-    wf5Pm: Optional[str] = None
-    taMin5: Optional[int] = None
-    taMax5: Optional[int] = None
-
-    # 6일 후
-    rnSt6Am: Optional[int] = None
-    rnSt6Pm: Optional[int] = None
-    wf6Am: Optional[str] = None
-    wf6Pm: Optional[str] = None
-    taMin6: Optional[int] = None
-    taMax6: Optional[int] = None
-
-    # 7일 후
-    rnSt7Am: Optional[int] = None
-    rnSt7Pm: Optional[int] = None
-    wf7Am: Optional[str] = None
-    wf7Pm: Optional[str] = None
-    taMin7: Optional[int] = None
-    taMax7: Optional[int] = None
+    # Add more fields as needed based on models.py
 
 class WeeklyForecastCreate(WeeklyForecastBase):
     pass
