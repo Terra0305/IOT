@@ -31,27 +31,24 @@ class HourlyForecast(Base):
 class WeeklyForecast(Base):
     """
     기상청 중기예보 (Weekly Forecast)
-    - 주간 기온 및 육상 예보
+    - 주간 기온 및 육상 예보 (일별 저장)
     """
     __tablename__ = 'weekly_forecast'
 
-    # 복합 기본키: 발표 시각 + 지역 코드
-    tmFc = Column(String(14), primary_key=True, nullable=False, comment="발표시각 (YYYYMMDDHHMM)")
+    # 복합 기본키: 예보구역코드 + 예보 날짜
     regId = Column(String(10), primary_key=True, nullable=False, comment="예보구역코드")
+    fcstDate = Column(String(8), primary_key=True, nullable=False, comment="예보날짜 (YYYYMMDD)")
 
-    # 예보 데이터 (3일 후 ~ 10일 후)
-    # 예시로 3일 후 오전/오후 강수확률, 날씨, 최저/최고 기온만 정의 (필요 시 확장)
-    rnSt3Am = Column(Integer, comment="3일 후 오전 강수확률")
-    rnSt3Pm = Column(Integer, comment="3일 후 오후 강수확률")
-    wf3Am = Column(String(20), comment="3일 후 오전 날씨")
-    wf3Pm = Column(String(20), comment="3일 후 오후 날씨")
-    taMin3 = Column(Integer, comment="3일 후 최저기온")
-    taMax3 = Column(Integer, comment="3일 후 최고기온")
-    
-    # ... 4일, 5일, 6일 ... 데이터는 필요에 따라 추가
+    # 예보 데이터 (6개 속성)
+    rnStAm = Column(Integer, comment="오전 강수확률")
+    rnStPm = Column(Integer, comment="오후 강수확률")
+    wfAm = Column(String(20), comment="오전 날씨")
+    wfPm = Column(String(20), comment="오후 날씨")
+    taMin = Column(Integer, comment="최저기온")
+    taMax = Column(Integer, comment="최고기온")
 
     def __repr__(self):
-        return f"<Weekly {self.tmFc} {self.regId}>"
+        return f"<Weekly {self.regId} {self.fcstDate}>"
 
 class Dust(Base):
     """

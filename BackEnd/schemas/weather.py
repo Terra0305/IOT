@@ -29,15 +29,14 @@ class HourlyForecastResponse(HourlyForecastBase):
 
 # --- Weather (Weekly) ---
 class WeeklyForecastBase(BaseModel):
-    tmFc: str
     regId: str
-    rnSt3Am: Optional[int] = None
-    rnSt3Pm: Optional[int] = None
-    wf3Am: Optional[str] = None
-    wf3Pm: Optional[str] = None
-    taMin3: Optional[int] = None
-    taMax3: Optional[int] = None
-    # Add more fields as needed based on models.py
+    fcstDate: str
+    rnStAm: Optional[int] = None
+    rnStPm: Optional[int] = None
+    wfAm: Optional[str] = None
+    wfPm: Optional[str] = None
+    taMin: Optional[int] = None
+    taMax: Optional[int] = None
 
 class WeeklyForecastCreate(WeeklyForecastBase):
     pass
