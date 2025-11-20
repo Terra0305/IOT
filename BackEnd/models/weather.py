@@ -39,16 +39,62 @@ class WeeklyForecast(Base):
     tmFc = Column(String(14), primary_key=True, nullable=False, comment="발표시각 (YYYYMMDDHHMM)")
     regId = Column(String(10), primary_key=True, nullable=False, comment="예보구역코드")
 
-    # 예보 데이터 (3일 후 ~ 10일 후)
-    # 예시로 3일 후 오전/오후 강수확률, 날씨, 최저/최고 기온만 정의 (필요 시 확장)
+    # 예보 데이터 (1일 후 ~ 7일 후)
+    # 1일 후
+    rnSt1Am = Column(Integer, comment="1일 후 오전 강수확률")
+    rnSt1Pm = Column(Integer, comment="1일 후 오후 강수확률")
+    wf1Am = Column(String(20), comment="1일 후 오전 날씨")
+    wf1Pm = Column(String(20), comment="1일 후 오후 날씨")
+    taMin1 = Column(Integer, comment="1일 후 최저기온")
+    taMax1 = Column(Integer, comment="1일 후 최고기온")
+
+    # 2일 후
+    rnSt2Am = Column(Integer, comment="2일 후 오전 강수확률")
+    rnSt2Pm = Column(Integer, comment="2일 후 오후 강수확률")
+    wf2Am = Column(String(20), comment="2일 후 오전 날씨")
+    wf2Pm = Column(String(20), comment="2일 후 오후 날씨")
+    taMin2 = Column(Integer, comment="2일 후 최저기온")
+    taMax2 = Column(Integer, comment="2일 후 최고기온")
+
+    # 3일 후
     rnSt3Am = Column(Integer, comment="3일 후 오전 강수확률")
     rnSt3Pm = Column(Integer, comment="3일 후 오후 강수확률")
     wf3Am = Column(String(20), comment="3일 후 오전 날씨")
     wf3Pm = Column(String(20), comment="3일 후 오후 날씨")
     taMin3 = Column(Integer, comment="3일 후 최저기온")
     taMax3 = Column(Integer, comment="3일 후 최고기온")
-    
-    # ... 4일, 5일, 6일 ... 데이터는 필요에 따라 추가
+
+    # 4일 후
+    rnSt4Am = Column(Integer, comment="4일 후 오전 강수확률")
+    rnSt4Pm = Column(Integer, comment="4일 후 오후 강수확률")
+    wf4Am = Column(String(20), comment="4일 후 오전 날씨")
+    wf4Pm = Column(String(20), comment="4일 후 오후 날씨")
+    taMin4 = Column(Integer, comment="4일 후 최저기온")
+    taMax4 = Column(Integer, comment="4일 후 최고기온")
+
+    # 5일 후
+    rnSt5Am = Column(Integer, comment="5일 후 오전 강수확률")
+    rnSt5Pm = Column(Integer, comment="5일 후 오후 강수확률")
+    wf5Am = Column(String(20), comment="5일 후 오전 날씨")
+    wf5Pm = Column(String(20), comment="5일 후 오후 날씨")
+    taMin5 = Column(Integer, comment="5일 후 최저기온")
+    taMax5 = Column(Integer, comment="5일 후 최고기온")
+
+    # 6일 후
+    rnSt6Am = Column(Integer, comment="6일 후 오전 강수확률")
+    rnSt6Pm = Column(Integer, comment="6일 후 오후 강수확률")
+    wf6Am = Column(String(20), comment="6일 후 오전 날씨")
+    wf6Pm = Column(String(20), comment="6일 후 오후 날씨")
+    taMin6 = Column(Integer, comment="6일 후 최저기온")
+    taMax6 = Column(Integer, comment="6일 후 최고기온")
+
+    # 7일 후
+    rnSt7Am = Column(Integer, comment="7일 후 오전 강수확률")
+    rnSt7Pm = Column(Integer, comment="7일 후 오후 강수확률")
+    wf7Am = Column(String(20), comment="7일 후 오전 날씨")
+    wf7Pm = Column(String(20), comment="7일 후 오후 날씨")
+    taMin7 = Column(Integer, comment="7일 후 최저기온")
+    taMax7 = Column(Integer, comment="7일 후 최고기온")
 
     def __repr__(self):
         return f"<Weekly {self.tmFc} {self.regId}>"
