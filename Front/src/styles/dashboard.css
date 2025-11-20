@@ -1,0 +1,295 @@
+/* 4. Glassmorphism 카드 공통 스타일 */
+.weekly-forecast-container, 
+.detail-summary-area, 
+.hourly-forecast-block {
+    /* variables.css에 정의된 변수 사용 */
+    background: var(--bg-card-light); 
+    backdrop-filter: var(--bg-backdrop-filter); /* 블러 효과 */
+    border: 1px solid var(--bg-border-color); /* 테두리 */
+    border-radius: 12px; /* Figma의 모서리 반경 */
+    padding: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+
+/* 5. 주간 예보 (Weekly)와 상세 정보 (Detail)의 Flex 분할 */
+.weekly-details-grid {
+    grid-column: 1 / span 2; /* Full Width를 차지하도록 설정 */
+    display: flex;
+    gap: 20px; 
+    align-items: flex-start; /* 상단 정렬 */
+}
+
+.weekly-forecast-container {
+    flex-basis: 35%; /* 주간 예보가 화면 너비의 약 35%를 차지하도록 */
+    flex-grow: 0;
+}
+
+
+/* 3. 개별 항목 컨테이너 (HourlyItem) */
+.hourly-item-container {
+    display: flex;
+    flex-direction: column; /* 내용을 수직으로 쌓음 */
+    align-items: center; /* 수평 중앙 정렬 */
+    justify-content: center;
+    
+    /* 항목 내부의 수직 간격 */
+    gap: 8px; 
+    
+    /* 너비를 고정하여 스크롤 시 형태 유지 (Figma 추출 너비) */
+    width: 60px; 
+    flex-shrink: 0; /* 공간이 줄어도 이 요소는 줄어들지 않도록 고정 */
+}
+
+/* 4. 시간/온도 텍스트 스타일 */
+.item-time-text {
+    color: #FFF;
+    font-family: Inter;
+    font-size: 13.758px;
+    font-style: normal;
+    font-weight: 300;
+    line-height: normal;
+    margin: 0;
+    opacity: 0.8;
+}
+
+/* 4. 최저/최고 온도 텍스트 */
+.temp-low-value, .temp-high-value {
+    /* Figma 추출 값 반영 */
+    font-weight: 400; 
+    font-family: 'Inter', sans-serif; 
+    line-height: normal;
+    
+    /* 기존 구조 유지를 위한 속성 */
+    font-size: 0.95rem; 
+    flex-shrink: 0; 
+}
+
+/* 4-1. 최저 온도 전용 (파란색) */
+.temp-low-value {
+    color: #3B80AB; 
+}
+
+/* 4-2. 최고 온도 전용 (흰색) */
+.temp-high-value {
+    color: #FFF; /* 또는 var(--color-text-light) */
+}
+
+
+/* 5. 막대 트랙 (전체 온도 범위 배경) */
+.temp-scale-track {
+    /* [반응형]: Figma의 134px 대신 부모 공간을 채우도록 100% 사용 */
+    width: 100%; 
+    height: 9px; /* Figma 추출 높이 */
+    background: #489FDF; /* Figma 추출 색상 */
+    border-radius: 25px; /* Figma 추출 값 (Pill shape) */
+    
+    position: relative; /* 중요: Fill 막대 기준점 설정 */
+    overflow: hidden; /* Fill 막대가 넘쳐도 트랙 경계 내에서만 보이도록 */
+}
+
+/* 6. 실제 범위 채우기 (그라데이션 색상 막대) */
+.temp-range-fill {
+    /* 높이: 트랙(9px)보다 1px 작게 하여 테두리 효과를 줌 */
+    height: 8px; 
+    
+    /* Figma에서 추출한 그라데이션 값 적용 */
+    background: linear-gradient(90deg, #71FFF3 33.33%, #65FFF2 65.54%, #E3FF98 108.33%);
+    border-radius: 25px;
+    
+    /* Absolute Positioning을 사용하여 트랙 위에 겹치게 함 */
+    position: absolute;
+    /* 9px 트랙 안에 8px 막대를 수직 중앙 정렬 (0.5px 마진) */
+    top: 0.5px; 
+    left: 0;
+    
+    /* *주의*: 이 width와 left 값은 React/JS에서 동적으로 계산되어 적용됩니다. */
+    width: 75px; /* 시각적 확인을 위한 임시 값 (개발 시 style={{ width: ... }}로 대체됨) */
+}
+
+
+
+
+/* --- DETAIL CARD & GRID STYLES --- */
+
+/* --- DETAIL CARD STYLES (업데이트) --- */
+
+/* 1. Detail Grid Container (두 개의 큰 카드를 수직으로 배치) */
+.detail-grid-container {
+    display: flex;
+    flex-direction: column; /* 카드를 세로로 쌓음 */
+    gap: 15px; /* 두 큰 카드 사이의 간격 */
+    margin-bottom: 20px; 
+}
+
+
+/* 2. 개별 큰 카드 컨테이너 내부 분할 스타일 */
+/* --- DETAIL CARD CONTAINER STYLES (최종) --- */
+
+.detail-card-container {
+    /* [기존 설정 유지]: 내부 항목을 좌우로 나누는 Flexbox */
+    display: flex;
+    flex-direction: row; /* 내용을 수평으로 분할 */
+    gap: 0; 
+    
+    /* 높이를 Figma 값과 동일하게 설정하여 최소 높이 확보 */
+    min-height: 217px; 
+    
+    padding: 0; /* 내부 항목에 padding을 주기 위해 컨테이너 padding은 0으로 설정 */
+    
+    /* === Figma 추출 외형 속성 반영 === */
+
+    /* 1. 모서리 반경 적용 */
+    border-radius: 22px; 
+    
+    /* 2. 테두리 적용 */
+    border: 1px solid #FFF; 
+    
+    /* 3. 배경색 (16% 불투명한 흰색) */
+    background: rgba(255, 255, 255, 0.16); 
+    
+    /* 4. 블러 효과 (변수 유지) */
+    backdrop-filter: var(--bg-backdrop-filter); 
+    
+    /* 5. width/height는 반응형 Grid가 담당하므로 여기서 제거 */
+}
+
+
+/* 3. 개별 정보 항목 (예: UV, Wind) */
+.detail-item-group {
+    flex-grow: 1; /* 가용 공간을 50:50으로 나눔 */
+    width: 50%; 
+    padding: 20px; /* 카드 안쪽 여백 설정 */
+    
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* 내용을 위아래로 분산 */
+
+    border-right: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* 수직 구분선을 위한 스타일: 왼쪽 섹션의 오른쪽에만 테두리 추가 */
+.detail-item-group.left-section {
+    /* image_d01b4c.png를 보면 흰색 1px 테두리처럼 보입니다. */
+    border-right: 1px solid #FFF;
+}
+
+.detail-item-group.right-section {
+    border-right: none; 
+}
+
+/* 카드 헤더 (아이콘 + 제목) */
+.card-header-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 5px;
+}
+
+
+
+/* 수치 값 (가장 크게) */
+.card-value-display {
+    font-size: 1.8rem;
+    font-weight: 700; /* Bold */
+    color: var(--color-text-light);
+    margin: 0;
+    color: #FFF;
+    font-family: Inter;
+    font-size: 40px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+}
+
+/* 상태 설명 */
+/* 1. UV Index와 Wind Title의 공통 스타일 */
+.card-title-text,
+.card-secondary-status,
+.card-detail-status {
+    color: #FFF; 
+    font-family: 'Inter', sans-serif;
+    font-size: 0.875rem; /* 14px */
+    font-weight: 600; 
+    line-height: normal;
+    margin: 0;
+}
+/* [주의]: 필요하다면 .card-detail-status 에 opacity: 0.6; 를 추가하여 계층을 낮출 수 있습니다. */
+
+
+/* --- SUMMARY RESULT CARD STYLES --- */
+
+/* 종합 결과 컨테이너 */
+.summary-card-container {
+    /* DetailSummaryArea에서 상속받은 Glassmorphism 배경 위에 또 다른 스타일을 적용 */
+    padding: 25px;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* 주요 섹션 간의 수직 간격 */
+}
+
+/* 1. 헤더 (이모지 + 야외 활동 최적) */
+.summary-header {
+    width: 77.5px;
+    height: 74.167px;
+    flex-shrink: 0;
+
+    color: #FFF;
+    font-family: Inter;
+    font-size: 32px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+
+    font-size: 3rem; /* 큰 표정 아이콘 */
+    line-height: 1;
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* 구분선 */
+}
+
+
+/* 2. 상세 근거 및 추천 제목 */
+.summary-advice-text, .summary-recommend-title {
+    color: #FFF;
+    font-family: Inter;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin: 0;
+}
+
+/* 3. 추천 목록 스타일 */
+.recommendation-list {
+    color: #FFF;
+    font-family: Inter;
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 300;
+    line-height: normal;
+
+    list-style: none; /* 리스트 점 제거 */
+    padding: 0;
+    margin: 0;
+}
+
+/* --- 노래 제목 (List Item) 스타일 --- */
+.recommendation-list li {
+    /* Figma 추출 스타일 반영 */
+    color: #42486B; /* 어두운 청회색 */
+    font-size: 1.25rem; /* 20px */
+    font-weight: 300; /* 얇은 폰트 (Light) */
+    font-family: 'Inter', sans-serif;
+    line-height: normal;
+    
+    /* 다른 padding이나 margin이 있다면 여기서 0으로 초기화 */
+    margin: 0;
+}

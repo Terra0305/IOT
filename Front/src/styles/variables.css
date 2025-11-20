@@ -1,0 +1,33 @@
+/* Figma Light Mode Blue Theme Variables */
+:root {
+  /* 🎨 Color Palette */
+  --color-primary-blue: #007bff;
+  --color-text-light: #ffffff;
+  --color-text-dark: #1f1f1f; 
+
+  /* 💎 Glassmorphism Backgrounds (주요 카드 배경) */
+  --bg-card-light: rgba(255, 255, 255, 0.3); /* 연한 불투명 흰색 */
+  --bg-backdrop-filter: blur(15px);
+  --bg-border-color: rgba(255, 255, 255, 0.4);
+
+  /* ☀️ Day Mode Background Gradient (전체 배경) */
+  --bg-sky-day-start: #87ceeb; /* Sky Blue */
+  --bg-sky-day-end: #00aaff;  /* Lighter Blue */
+  
+  /* 폰트 */
+  --font-family-primary: 'Pretendard', sans-serif;
+}
+
+/* 🌙 Dark Mode (Night) Theme */
+.theme-dark {
+  --color-text-light: #f0f0f0;
+  --color-text-dark: #e0e0e0;
+  
+  --bg-card-light: rgba(0, 0, 0, 0.2); /* 어두운 불투명 검은색 */
+  --bg-border-color: rgba(255, 255, 255, 0.1);
+
+  --bg-sky-day-start: #0f1c30; /* Dark Night Blue */
+  --bg-sky-day-end: #000000;  /* Black */
+}
+
+/* 폰트 임포트 등은 index.css에서 진행 예정 */

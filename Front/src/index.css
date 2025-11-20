@@ -1,0 +1,41 @@
+@import './variables.css'; /* 1. 커스텀 변수 파일 임포트 */
+
+:root {
+  /* 기존 font-family 등은 유지 */
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  /* color-scheme과 기본 color는 variables.css가 처리하도록 여기서 제거 */
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  /* 2. 기존 중앙 정렬 속성 제거 및 커스텀 배경 적용 */
+  margin: 0;
+  display: block; /* flex 대신 block으로 변경 */
+  min-width: 320px;
+  min-height: 100vh;
+  
+  /* Day Mode 그라데이션을 기본 배경으로 적용 */
+  background: linear-gradient(135deg, var(--bg-sky-day-start), var(--bg-sky-day-end));
+  color: var(--color-text-light); /* 기본 텍스트 색상 (밝은 색) */
+  transition: background 0.5s ease-in-out; /* 배경 변경 시 부드럽게 전환 */
+}
+
+/* 3. 불필요한 기본 테마 미디어 쿼리 삭제 (variables.css에서 관리) */
+/* 기존의 @media (prefers-color-scheme: light) 블록은 여기서 제거합니다. */
+
+/* 기존의 a, button 스타일은 그대로 유지 (생략) */
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+}
+a:hover {
+  color: #535bf2;
+}
+/* ... (h1, button, button:hover 등 나머지 스타일 유지) ... */

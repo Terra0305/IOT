@@ -1,0 +1,176 @@
+.theme-day-clear {
+    /* 낮 맑음 배경 그라데이션 */
+    background: linear-gradient(180deg, #098CFF 0%, #61C2FF 34.13%, #75CAFF 54.33%, #83DEFF 83.65%, #C4E8FF 100%);
+    box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
+    /* 스크롤 시 배경 고정 (옵션) */
+    background-attachment: fixed; 
+    min-height: 100vh; /* 전체 뷰포트 높이 채우기 */
+}
+
+.theme-cloudy {
+    /* 낮 구름 많음 배경 그라데이션 */
+    background: linear-gradient(180deg, #1C7AB4 0%, #89A4B4 66.35%, #FFF 100%);
+    box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
+    background-attachment: fixed; 
+    min-height: 100vh; 
+}
+
+/* src/App.css 또는 themes.css 에 추가 */
+
+.partly-cloudy-icon-wrapper {
+    position: relative;
+    /* ... (크기 설정 유지) ... */
+}
+
+/* 모든 아이콘 레이어는 Absolute로 띄웁니다. */
+.partly-cloudy-icon-wrapper svg,
+.cloud-layer-1, .cloud-layer-2 {
+    position: absolute;
+    top: 0; 
+    left: 0;
+}
+
+/* Z-Index 설정: Small Cloud > Large Cloud > Sun */
+.partly-sun-base { z-index: 1; opacity: 0.8; }
+.cloud-layer-1 { z-index: 5; } /* 큰 구름이 해보다 앞에 옴 */
+.cloud-layer-2 { z-index: 10; } /* 작은 구름이 가장 위에 옴 */
+
+
+
+/* 3. 비 테마 (Rainy - 젖은 듯한 부드러운 톤) */
+.theme-rainy {
+    /* [수정] 사용자 지정 그라데이션 값 적용 */
+    background: linear-gradient(180deg, #325870 0%, #66889E 66.35%, #ACB8CC 100%);
+    color: var(--color-text-light); /* 밝은 텍스트 유지 */
+    background-attachment: fixed;
+}
+
+/* --- Night Clear Theme --- */
+
+.theme-night-clear {
+    /* [수정] 밤 맑음 배경 그라데이션 */
+    background: linear-gradient(180deg, rgba(0, 23, 49, 0.77) 17.79%, rgba(0, 33, 71, 0.77) 41.35%, rgba(0, 47, 100, 0.77) 58.17%, rgba(34, 71, 113, 0.77) 87.98%);
+    background-attachment: fixed;
+    /* 밤 배경은 어둡지만, 글자색은 밝게 유지됩니다. */
+}
+
+/* --- Moon Glow Effect --- */
+
+.moon-glow {
+    /* 달 주변 빛 효과 (Moon Icon 뒤에 배치) */
+    border-radius: 964px; 
+    /* radial-gradient는 CSS에서 background 속성으로 적용 */
+    background: radial-gradient(50.2% 49.95% at 50% 50%, #BCB7B7 0%, rgba(0, 23, 49, 0.00) 56.73%);
+    
+    /* 적절한 크기를 부여합니다. (Figma 크기에 비례하여) */
+    width: 350px;   
+    height: 350px;
+    position: absolute; 
+    z-index: -1; /* 아이콘 뒤에 배치 */
+}
+
+/* --- Star Field --- */
+
+.star-field-container {
+    /* 별 패턴이 들어갈 영역 */
+    width: 100%; /* 화면 전체 너비 */
+    height: 634px; /* Figma 추출 높이 */
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -2; /* 배경 바로 위에 배치 */
+}
+
+/* --- Night Cloudy Theme --- */
+
+.theme-night-cloudy {
+    /* [수정] 밤 흐림 배경 그라데이션 */
+    background: linear-gradient(180deg, rgba(33, 57, 84, 0.77) 17.79%, rgba(40, 73, 111, 0.77) 41.35%, rgba(54, 86, 122, 0.77) 58.17%, rgba(84, 105, 128, 0.77) 87.98%);
+    background-attachment: fixed;
+    /* 밤 배경이므로 텍스트는 밝게 유지 */
+    color: var(--color-text-light); 
+}
+
+/* --- Moon Cloudy Glow Effect --- */
+
+.moon-cloudy-glow {
+    /* 밤 흐림 상태의 달 주변 빛 효과 (MoonCloudyIcon 뒤에 배치) */
+    border-radius: 880px; /* Figma에서 지정된 radius */
+    background: radial-gradient(50.2% 49.95% at 50% 50%, #BCB7B7 0%, #ECECEC 0.01%, rgba(0, 23, 49, 0.00) 34.13%);
+    
+    /* 크기는 MoonIcon에 맞춰 적절히 조정 */
+    width: 250px;   
+    height: 250px;
+    position: absolute; 
+    z-index: -1; /* 아이콘 뒤에 배치 */
+    filter: blur(17.72905158996582px); /* Figma의 blur 효과 적용 */
+}
+
+/* --- Night Rainy Theme (밤 비) --- */
+
+.theme-night-rainy {
+    /* 사용자 지정 그라데이션 값 적용 */
+    background: linear-gradient(180deg, rgba(32, 42, 52, 0.77) 17.79%, rgba(35, 52, 73, 0.77) 41.35%, rgba(38, 61, 87, 0.77) 58.17%, rgba(44, 69, 98, 0.77) 69.71%, rgba(57, 85, 116, 0.77) 87.98%);
+    background-attachment: fixed;
+    color: var(--color-text-light); /* 밝은 텍스트 유지 */
+}
+
+
+/* --- Snowy Theme (눈) --- */
+
+.theme-snowy {
+    /* [수정] 사용자 지정 그라데이션 값 적용 (짙은 파랑 -> 밝은 회색) */
+    background: linear-gradient(180deg, #3E4374 0%, #006BAE 30.29%, #5481D0 48.08%, #7A9BD6 78.85%, #ACB8CC 100%);
+    background-attachment: fixed;
+    /* 눈은 밝은 톤이지만, 배경이 어두운 부분이 있어 텍스트는 밝게 유지 */
+    color: var(--color-text-light); 
+}
+
+/* --- Weekly Container Dynamic Style (Figma 추출 값 적용) --- */
+
+/* Weekly Forecast Container가 Snowy 테마일 때 적용될 고유 배경 */
+.theme-snowy .weekly-list-container {
+    border-radius: 45px; 
+    opacity: 0.88;
+    /* 배경색과 블러 효과를 직접 적용 */
+    background: rgba(39, 48, 133, 0.27);
+    backdrop-filter: blur(10px);
+}
+
+
+/* --- WEEKLY FORECAST CONTAINER THEMES --- */
+
+/* 1. Day - Cloudy */
+.theme-cloudy .weekly-list-container {
+    border-radius: 50px;
+    opacity: 0.88;
+    background: #5C96BA;
+}
+
+/* 2. Day - Rainy */
+.theme-rainy .weekly-list-container {
+    border-radius: 50px;
+    opacity: 0.88;
+    background: #4A6D83;
+}
+
+/* 3. Night - Clear (밤 맑음) */
+.theme-night-clear .weekly-list-container {
+    border-radius: 50px;
+    opacity: 0.88;
+    background: #012E4A;
+}
+
+/* 4. Night - Cloudy (밤 흐림) */
+.theme-night-cloudy .weekly-list-container {
+    border-radius: 50px;
+    opacity: 0.88;
+    background: #223C59;
+}
+
+/* 5. Night - Rainy (밤 비) */
+.theme-night-rainy .weekly-list-container {
+    border-radius: 50px;
+    opacity: 0.88;
+    background: #1A2B3D;
+}
