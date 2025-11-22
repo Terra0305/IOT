@@ -1,8 +1,12 @@
-// src/assets/HumidityIcon.jsx
+// src/assets/HumidityIcon.tsx
 
 import * as React from "react";
 
-const HumidityIcon = (props) => (
+interface IconProps extends React.SVGProps<SVGSVGElement> {
+    size?: number;
+}
+
+const HumidityIcon = (props: IconProps) => (
   <svg 
     xmlns="http://www.w3.org/2000/svg" 
     width={props.size || 34} 
@@ -13,7 +17,7 @@ const HumidityIcon = (props) => (
   >
     <path 
       d="M18.005 0.3716C17.6467 0.129418 17.2241 0 16.7917 0C16.3592 0 15.9366 0.129418 15.5783 0.3716C14.9283 0.804933 0 11.2049 0 26.5449C0 30.9984 1.76912 35.2694 4.91817 38.4184C8.06721 41.5675 12.3382 43.3366 16.7917 43.3366C21.2451 43.3366 25.5161 41.5675 28.6652 38.4184C31.8142 35.2694 33.5833 30.9984 33.5833 26.5449C33.5833 10.9449 18.6333 0.783266 18.005 0.3716ZM16.7917 39.0033C13.4893 38.9975 10.3238 37.6831 7.98862 35.348C5.65347 33.0128 4.33906 29.8473 4.33333 26.5449C4.33333 15.7116 13.455 7.54327 16.7917 4.87827C20.15 7.49993 29.25 15.7116 29.25 26.5449C29.2443 29.8473 27.9299 33.0128 25.5947 35.348C23.2596 37.6831 20.0941 38.9975 16.7917 39.0033Z" 
-      fill={props.color || "white"} // props로 색상 설정 가능
+      fill={props.color || "white"} 
     />
   </svg>
 );

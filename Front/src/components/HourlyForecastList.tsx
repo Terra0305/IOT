@@ -1,8 +1,8 @@
 // src/components/HourlyForecastList.tsx
 
 import React, { useState, useEffect } from 'react';
-import axios from 'axios.tsx';
-import HourlyItem from './HourlyItem.tsx'; // .tsx로 바뀌었으므로 이제 인식됩니다.
+import axios from 'axios';
+import HourlyItem from './HourlyItem';
 
 // 1. [Type] API에서 받아올 데이터의 모양을 정의합니다.
 // (Error 2339 'never' 해결)
