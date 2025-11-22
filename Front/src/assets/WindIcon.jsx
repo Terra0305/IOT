@@ -1,4 +1,3 @@
-// src/assets/WindIcon.jsx (이 코드를 통째로 붙여넣으세요)
 
 import * as React from "react";
 

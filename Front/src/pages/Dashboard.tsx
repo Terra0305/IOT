@@ -6,7 +6,6 @@ import WeeklyForecastList from '../components/WeeklyForecastList';
 import HourlyForecastList from '../components/HourlyForecastList';
 import React from 'react';
 import WeatherCurrent from '../components/WeatherCurrent'; // 현재 날씨 아이콘 영역
-// WeatherHistory는 사용자 요청에 따라 제거됨
 
 // ----------------------------------------------------
 // (가정) Figma 디자인에서 결정된 날씨 정보 및 위치
