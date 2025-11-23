@@ -61,27 +61,40 @@ const DUMMY_DATA: WeatherData = {
 };
 
 
-// --- 메인 컴포넌트 ---
 const WeatherCurrent: React.FC = () => {
-    // 로딩 및 API 로직 (유지)
+    // 초기값을 DUMMY_DATA로 설정하여 빈 화면 방지
     const [weatherData, setWeatherData] = useState<WeatherData>(DUMMY_DATA);
     
+    // [핵심 수정] 테마 클래스 설정 로직 강화
     useEffect(() => {
         const baseUrl = import.meta.env.VITE_APP_API_URL || 'http://localhost:8080'; 
         const apiUrl = `${baseUrl}/weather/current`;
         
-        axios.get(apiUrl)
+        // 데이터 요청
+        axios.get<WeatherData>(apiUrl)
             .then(response => {
-                if (response.data) {
+                if (response.data && response.data.current_temp !== undefined) {
                     setWeatherData(response.data); 
+                    
+                    // [API 성공 시] 테마 적용
                     const themeClass = getThemeClassFromData(response.data.sky_value, response.data.pty_value, response.data.timestamp);
                     document.body.className = themeClass; 
                 }
             })
             .catch((err) => {
-                console.log("백엔드 연결 실패 (더미 데이터 사용):", err);
+                // API 실패 시, 더미 데이터를 사용하지만 테마는 더미 데이터 기준으로 설정
+                console.log("현재 날씨 API 연결 실패. 더미 데이터를 사용합니다.");
+                
+                // [API 실패 시] 더미 데이터 기준으로 테마 적용
+                const themeClass = getThemeClassFromData(DUMMY_DATA.sky_value, DUMMY_DATA.pty_value, DUMMY_DATA.timestamp);
+                document.body.className = themeClass; 
             });
-    }, []); 
+            
+        // 컴포넌트가 마운트될 때, 초기 더미 데이터 기준으로 한번 테마를 설정합니다.
+        const initialThemeClass = getThemeClassFromData(DUMMY_DATA.sky_value, DUMMY_DATA.pty_value, DUMMY_DATA.timestamp);
+        document.body.className = initialThemeClass; 
+
+    }, []);
 
     // 로딩/에러 처리 (유지)
     // 이 부분은 간결하게 처리했습니다.
