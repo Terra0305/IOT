@@ -6,8 +6,8 @@ from schemas.weather import HourlyForecastCreate, DustCreate, UVCreate, WeeklyFo
 def create_hourly_forecast(db: Session, forecast: HourlyForecastCreate):
     # Upsert: Check if exists, if so update, else insert
     db_obj = db.query(HourlyForecast).filter(
-        HourlyForecast.fcstDate == forecast.fcstDate,
-        HourlyForecast.fcstTime == forecast.fcstTime,
+        HourlyForecast.base_date == forecast.base_date,
+        HourlyForecast.base_time == forecast.base_time,
         HourlyForecast.nx == forecast.nx,
         HourlyForecast.ny == forecast.ny
     ).first()
@@ -26,21 +26,10 @@ def create_hourly_forecast(db: Session, forecast: HourlyForecastCreate):
     return db_obj
 
 def get_latest_hourly_forecast(db: Session, nx: int, ny: int):
-    # This returns the furthest future forecast. 
-    # If we want the "current" valid forecast, we should filter by date/time >= now.
     return db.query(HourlyForecast).filter(
         HourlyForecast.nx == nx,
         HourlyForecast.ny == ny
-    ).order_by(HourlyForecast.fcstDate.desc(), HourlyForecast.fcstTime.desc()).first()
-
-def get_hourly_forecasts(db: Session, nx: int, ny: int, limit: int = 24):
-    """
-    Returns the next 'limit' hours of forecast data, sorted by time.
-    """
-    return db.query(HourlyForecast).filter(
-        HourlyForecast.nx == nx,
-        HourlyForecast.ny == ny
-    ).order_by(HourlyForecast.fcstDate.asc(), HourlyForecast.fcstTime.asc()).limit(limit).all()
+    ).order_by(HourlyForecast.base_date.desc(), HourlyForecast.base_time.desc()).first()
 
 # --- Dust ---
 def create_dust(db: Session, dust: DustCreate):

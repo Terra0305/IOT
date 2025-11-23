@@ -7,18 +7,18 @@ class MessageResponse(BaseModel):
 
 # --- Weather (Hourly) ---
 class HourlyForecastBase(BaseModel):
-    fcstDate: str
-    fcstTime: str
+    base_date: str
+    base_time: str
     nx: int
     ny: int
     temperature: Optional[float] = None
-    humidity: Optional[int] = None
-    sky: Optional[int] = None
-    pty: Optional[int] = None
-    pop: Optional[int] = None
-    pcp: Optional[str] = None
-    vec: Optional[float] = None
-    wsd: Optional[float] = None
+    humidity: Optional[float] = None
+    rain_1h: Optional[float] = None
+    precip_type: Optional[int] = None
+    wind_speed: Optional[float] = None
+    wind_direction: Optional[float] = None
+    wind_ew: Optional[float] = None
+    wind_ns: Optional[float] = None
 
 class HourlyForecastCreate(HourlyForecastBase):
     pass
@@ -30,56 +30,13 @@ class HourlyForecastResponse(HourlyForecastBase):
 # --- Weather (Weekly) ---
 class WeeklyForecastBase(BaseModel):
     regId: str
-    tmFc: str
-    # Day 1
-    rnSt1Am: Optional[int] = None
-    rnSt1Pm: Optional[int] = None
-    wf1Am: Optional[str] = None
-    wf1Pm: Optional[str] = None
-    taMin1: Optional[int] = None
-    taMax1: Optional[int] = None
-    # Day 2
-    rnSt2Am: Optional[int] = None
-    rnSt2Pm: Optional[int] = None
-    wf2Am: Optional[str] = None
-    wf2Pm: Optional[str] = None
-    taMin2: Optional[int] = None
-    taMax2: Optional[int] = None
-    # Day 3
-    rnSt3Am: Optional[int] = None
-    rnSt3Pm: Optional[int] = None
-    wf3Am: Optional[str] = None
-    wf3Pm: Optional[str] = None
-    taMin3: Optional[int] = None
-    taMax3: Optional[int] = None
-    # Day 4
-    rnSt4Am: Optional[int] = None
-    rnSt4Pm: Optional[int] = None
-    wf4Am: Optional[str] = None
-    wf4Pm: Optional[str] = None
-    taMin4: Optional[int] = None
-    taMax4: Optional[int] = None
-    # Day 5
-    rnSt5Am: Optional[int] = None
-    rnSt5Pm: Optional[int] = None
-    wf5Am: Optional[str] = None
-    wf5Pm: Optional[str] = None
-    taMin5: Optional[int] = None
-    taMax5: Optional[int] = None
-    # Day 6
-    rnSt6Am: Optional[int] = None
-    rnSt6Pm: Optional[int] = None
-    wf6Am: Optional[str] = None
-    wf6Pm: Optional[str] = None
-    taMin6: Optional[int] = None
-    taMax6: Optional[int] = None
-    # Day 7
-    rnSt7Am: Optional[int] = None
-    rnSt7Pm: Optional[int] = None
-    wf7Am: Optional[str] = None
-    wf7Pm: Optional[str] = None
-    taMin7: Optional[int] = None
-    taMax7: Optional[int] = None
+    fcstDate: str
+    rnStAm: Optional[int] = None
+    rnStPm: Optional[int] = None
+    wfAm: Optional[str] = None
+    wfPm: Optional[str] = None
+    taMin: Optional[int] = None
+    taMax: Optional[int] = None
 
 class WeeklyForecastCreate(WeeklyForecastBase):
     pass
