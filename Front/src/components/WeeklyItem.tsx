@@ -41,7 +41,7 @@ const WeeklyItem: React.FC<WeeklyItemProps> = ({ day, icon, tempLow, tempHigh, w
 
             {/* 2. 날씨 아이콘 */}
             <div className="weekly-weather-icon">
-                <WeatherIcon condition={icon} size={24} />
+                <WeatherIcon condition={icon} size={40} />
             </div>
             
             {/* 3. 온도 요약 및 막대 바 그룹 */}

@@ -1,86 +1,73 @@
-// src/components/HourlyForecastList.tsx
-
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import HourlyItem from './HourlyItem';
 
-interface HourlyForecastData {
-    time: string;
-    icon_code: string;
-    temperature: number;
+// --- [Type Definition] 시간별 데이터 타입 ---
+interface HourlyData {
+    time: string; // 예: "12:00"
+    temperature: number; // T1H
+    icon_code: string; // WeatherConditionKey에 해당하는 값 (예: "sun", "cloud")
 }
 
-// --- [추가] UI 테스트용 더미 데이터 ---
-const MOCK_HOURLY_DATA: HourlyForecastData[] = [
-    { time: "Now", icon_code: "sun", temperature: 14 },
-    { time: "1pm", icon_code: "sun", temperature: 15 },
-    { time: "2pm", icon_code: "cloud_sun", temperature: 16 },
-    { time: "3pm", icon_code: "cloud", temperature: 16 },
-    { time: "4pm", icon_code: "rain", temperature: 15 },
-    { time: "5pm", icon_code: "rain", temperature: 14 },
-    { time: "6pm", icon_code: "cloud", temperature: 13 },
-    { time: "7pm", icon_code: "moon", temperature: 12 },
-    { time: "8pm", icon_code: "moon", temperature: 11 },
-    { time: "9pm", icon_code: "cloud", temperature: 10 },
-    { time: "10pm", icon_code: "cloud", temperature: 9 },
-    { time: "11pm", icon_code: "moon", temperature: 8 },
-    // ... 필요하면 더 추가
-];
-
-const HourlyForecastList: React.FC = () => {
+// --- 임시 더미 데이터 (24시간 분량으로 확장) ---
+const createDummyData = (): HourlyData[] => {
+    const data: HourlyData[] = [];
+    const now = new Date();
     
-    const [hourlyData, setHourlyData] = useState<HourlyForecastData[]>([]);
-    const [isLoading, setIsLoading] = useState<boolean>(true);
-    const [error, setError] = useState<string | null>(null);
+    // 아이콘 목록 (반복 사용)
+    const icons = ["sun", "cloud_sun", "cloud", "rain", "snow", "moon", "cloud_moon", "sunrise_sunset"];
+    
+    for (let i = 0; i < 24; i++) {
+        const hour = now.getHours() + i;
+        const displayHour = hour % 12 || 12; // 12시간제로 표시
+        const ampm = hour % 24 < 12 ? 'am' : 'pm';
+        
+        data.push({
+            time: i === 0 ? "Now" : `${displayHour}${ampm}`,
+            icon_code: icons[i % icons.length],
+            temperature: 10 + Math.floor(Math.sin(i / 4) * 5) // 임시 온도 변화
+        });
+    }
+    return data;
+};
 
+const DUMMY_HOURLY_DATA: HourlyData[] = createDummyData();
+
+
+export default function HourlyForecastList() {
+    // [수정!] 초기값은 DUMMY_HOURLY_DATA로 설정합니다.
+    const [hourlyData, setHourlyData] = useState<HourlyData[]>(DUMMY_HOURLY_DATA);
+    
+    // API 호출 로직 (Daily Forecast API 호출)
     useEffect(() => {
-        const apiUrl = `${import.meta.env.VITE_APP_API_URL}/weather/hourly`;
-        
-        // --- [수정] API 호출 대신 더미 데이터 사용 ---
-        // 백엔드 연결 전까지는 이 부분이 UI를 보여줍니다.
-        
-        // 1. (나중에 쓸 코드) 실제 API 호출은 주석 처리
-        /*
-        axios.get(apiUrl)
-            .then((response: any) => {
-                setHourlyData(response.data.hourly_forecasts || []); 
-                setIsLoading(false);
+        const baseUrl = import.meta.env.VITE_APP_API_URL || 'http://localhost:8080';
+        // 백엔드의 24시간 예보 API 주소 (Daily)
+        const apiUrl = `${baseUrl}/weather/daily`; 
+
+        axios.get<HourlyData[]>(apiUrl)
+            .then(response => {
+                // API에서 24시간 데이터를 성공적으로 받아오면 업데이트합니다.
+                if (response.data && response.data.length > 0) {
+                    // 데이터 구조가 다르다면 여기에 매핑 로직을 추가해야 합니다.
+                    setHourlyData(response.data); 
+                }
             })
-            .catch((err: any) => { 
-                console.error("API Error:", err);
-                // 에러가 나더라도 UI를 보기 위해 더미 데이터 설정 (임시)
-                setHourlyData(MOCK_HOURLY_DATA); 
-                setIsLoading(false);
+            .catch(err => {
+                // 실패해도 더미 데이터는 유지됩니다.
+                console.warn("24시간 예보 API 연결 실패. 더미 데이터를 사용합니다.", err);
             });
-        */
-
-        // 2. (현재 쓸 코드) 더미 데이터 즉시 로드
-        setTimeout(() => {
-            setHourlyData(MOCK_HOURLY_DATA);
-            setIsLoading(false);
-        }, 500); // 0.5초 뒤에 로딩 끝
-
     }, []);
 
-    // 로딩 중일 때 표시
-    if (isLoading) {
-        return <div className="hourly-loading">Loading...</div>; 
-    }
-    
-    // 에러가 있어도 데이터를 보여주도록 로직 변경 (더미 데이터 사용 시 에러 화면 안 보임)
-    if (error && hourlyData.length === 0) {
-        return <div className="hourly-error">{error}</div>;
-    }
-
     return (
-        // Tailwind CSS 클래스 유지 + 기존 CSS 클래스(hourly-list-scrollable) 호환
+        // Tailwind CSS 클래스 유지
         <div className="hourly-list-viewport w-full overflow-x-auto no-scrollbar py-3">
-            <div className="hourly-list-scrollable flex gap-4 px-2 min-w-max">
+            {/* gap-[70px]: 요소 간 간격, min-w-max: 가로 스크롤 허용 */}
+            <div className="hourly-list-scrollable flex gap-[79px] px-2 min-w-max">
                 {hourlyData.map((item, index) => (
                     <HourlyItem
                         key={index}
                         time={item.time}
-                        icon={item.icon_code}
+                        icon={item.icon_code} // 이 이름으로 HourlyItem에 전달
                         temp={item.temperature}
                     />
                 ))}
@@ -88,5 +75,3 @@ const HourlyForecastList: React.FC = () => {
         </div>
     );
 }
-
-export default HourlyForecastList;

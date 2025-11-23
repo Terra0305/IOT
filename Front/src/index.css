@@ -1,73 +1,44 @@
+/* src/index.css */
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-
-:root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
-body {
+/* 1. 전체 화면 높이 설정 (필수) */
+html, body, #root {
+  height: 100%;
+  width: 100%;
   margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+  padding: 0;
+  overflow-x: hidden; /* 가로 스크롤 방지 */
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+/* 2. 기본 폰트 및 배경 설정 */
+body {
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+  color: white;
+  
+  /* --- [핵심 수정] 기본 배경: 낮 맑음 (Sunny) 그라데이션 직접 입력 --- */
+  background: linear-gradient(180deg, #098CFF 0%, #61C2FF 34.13%, #75CAFF 54.33%, #83DEFF 83.65%, #C4E8FF 100%);
+  
+  /* 부드러운 전환 효과 */
+  transition: background 0.5s ease-in-out;
+  background-attachment: fixed; /* 스크롤해도 배경 고정 */
 }
 
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+/* --- 3. 테마별 배경 (App.tsx에서 클래스가 바뀌면 적용됨) --- */
+
+/* 밤 맑음 (Night Clear) */
+body.theme-dark {
+  background: linear-gradient(180deg, rgba(0, 23, 49, 0.77) 17.79%, rgba(0, 33, 71, 0.77) 41.35%, rgba(0, 47, 100, 0.77) 58.17%, rgba(34, 71, 113, 0.77) 87.98%);
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+/* 흐림 (Cloudy) */
+body.theme-cloudy {
+  background: linear-gradient(180deg, #1C7AB4 0%, #89A4B4 66.35%, #FFF 100%);
+}
+
+/* 비 (Rainy) */
+body.theme-rainy {
+  background: linear-gradient(180deg, #325870 0%, #66889E 66.35%, #ACB8CC 100%);
 }
