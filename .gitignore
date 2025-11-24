@@ -23,8 +23,16 @@ dist-ssr
 *.sln
 *.sw?
 
+# Environment variables
 .env
+
+# Python
 venv/
 __pycache__/
 *.pyc
-.DS_Store
+*.pyo
+*.pyd
+.Python
+
+# OS
+Thumbs.db
