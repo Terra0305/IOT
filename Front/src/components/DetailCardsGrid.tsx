@@ -133,12 +133,21 @@ const getDustStatus = (grade: string) => {
     }
 };
 
+const getUVStatus = (index: number) => {
+    if (index <= 2) return { status: "낮음", desc: "안심하고 외출하세요" };
+    if (index <= 5) return { status: "보통", desc: "자외선 차단제를 바르세요" };
+    if (index <= 7) return { status: "높음", desc: "햇볕 노출을 줄이세요" };
+    if (index <= 10) return { status: "매우 높음", desc: "실내 활동을 권장합니다" };
+    return { status: "위험", desc: "외출을 삼가세요" };
+};
+
 export default function DetailCardsGrid({ type }: DetailCardsGridProps) {
     const [details, setDetails] = useState<Record<string, DetailItem>>(DUMMY_DETAILS);
 
     useEffect(() => {
+        const baseUrl = import.meta.env.VITE_APP_API_URL || 'http://localhost:8000';
+
         if (type === 'DUST_HUMIDITY') {
-            const baseUrl = import.meta.env.VITE_APP_API_URL || 'http://localhost:8000';
             axios.get(`${baseUrl}/api/weather/dust`)
                 .then(response => {
                     const data = response.data;
@@ -155,6 +164,24 @@ export default function DetailCardsGrid({ type }: DetailCardsGridProps) {
                     }));
                 })
                 .catch(err => console.error("Failed to fetch dust info:", err));
+        } else if (type === 'UV_WIND') {
+            axios.get(`${baseUrl}/api/weather/uv`)
+                .then(response => {
+                    const data = response.data;
+                    const uvIndex = parseInt(data.today || "0", 10);
+                    const { status, desc } = getUVStatus(uvIndex);
+
+                    setDetails(prev => ({
+                        ...prev,
+                        UV: {
+                            ...prev.UV,
+                            value: uvIndex,
+                            status: status,
+                            description: desc
+                        }
+                    }));
+                })
+                .catch(err => console.error("Failed to fetch UV info:", err));
         }
     }, [type]);
 
