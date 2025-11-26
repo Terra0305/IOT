@@ -1,4 +1,5 @@
-import React, { type ReactNode } from 'react'; // [수정] ReactNode 임포트 방식 수정
+import React, { type ReactNode, useEffect, useState } from 'react';
+import axios from 'axios';
 
 interface DetailCardsGridProps {
     type?: 'UV_WIND' | 'DUST_HUMIDITY';
@@ -55,15 +56,15 @@ const DUMMY_DETAILS: Record<string, DetailItem> = {
 
 // [수정 2] 전역 변수 제거 및 클래스 함수 내 정의
 const renderDetailItem = (data: DetailItem, type: 'UV' | 'WIND' | 'DUST' | 'HUMIDITY') => {
-    const ICON_SCALE = 1.8;
-    const ICON_SIZE_PX = 100; // 픽셀 단위로 통일 (30px)
+ const ICON_SCALE = 1.8;
+ const ICON_SIZE_PX = 100; // 픽셀 단위로 통일 (30px)
 
-    // 사용자 설정 크기 클래스를 함수 내부에 정의
+ // 사용자 설정 크기 클래스를 함수 내부에 정의
 
-    const titleClass = "text-[50px] font-bold text-white/90";
-    const valueClass = "card-value-display mb-6";
-    const statusClass = "card-detail-status mb-1";
-    const descriptionClass = "card-secondary-status";
+ const titleClass = "text-[50px] font-bold text-white/90";
+ const valueClass = "card-value-display mb-6";
+ const statusClass = "card-detail-status mb-1";
+ const descriptionClass = "card-secondary-status";
 
     // 개별 간격 유지를 위한 클래스 복구 (renderDetailItem 함수 내부로 이동)
     let titleMargin = "mb-4";
@@ -122,43 +123,76 @@ return (
 };
 
 
+const getDustStatus = (grade: string) => {
+    switch (grade) {
+        case "1": return { status: "좋음", desc: "공기질이 깨끗합니다" };
+        case "2": return { status: "보통", desc: "무난한 날씨입니다" };
+        case "3": return { status: "나쁨", desc: "마스크를 착용하세요" };
+        case "4": return { status: "매우 나쁨", desc: "외출을 자제하세요" };
+        default: return { status: "정보 없음", desc: "데이터를 불러올 수 없습니다" };
+    }
+};
+
 export default function DetailCardsGrid({ type }: DetailCardsGridProps) {
+    const [details, setDetails] = useState<Record<string, DetailItem>>(DUMMY_DETAILS);
 
-    // 1. 자외선 & 풍속 카드
-    if (type === 'UV_WIND') {
-        return (
-            <div className="detail-card-container">
-                
-                {/* [왼쪽] 자외선 */}
-                <div className="detail-item-group left-section !justify-center flex flex-col">
-                    {renderDetailItem(DUMMY_DETAILS.UV, 'UV')}
-                </div>
+    useEffect(() => {
+        if (type === 'DUST_HUMIDITY') {
+            const baseUrl = import.meta.env.VITE_APP_API_URL || 'http://localhost:8000';
+            axios.get(`${baseUrl}/api/weather/dust`)
+                .then(response => {
+                    const data = response.data;
+                    const { status, desc } = getDustStatus(data.pm10Grade);
+                    
+                    setDetails(prev => ({
+                        ...prev,
+                        DUST: {
+                            ...prev.DUST,
+                            value: `${data.pm10Value} µg/m³`,
+                            status: status,
+                            description: desc
+                        }
+                    }));
+                })
+                .catch(err => console.error("Failed to fetch dust info:", err));
+        }
+    }, [type]);
 
-                {/* [오른쪽] 풍속 */}
-                <div className="detail-item-group right-section !justify-center flex flex-col">
-                    {renderDetailItem(DUMMY_DETAILS.WIND, 'WIND')}
-                </div>
-            </div>
-        );
-    }
+    // 1. 자외선 & 풍속 카드
+    if (type === 'UV_WIND') {
+        return (
+            <div className="detail-card-container">
+                
+                {/* [왼쪽] 자외선 */}
+                <div className="detail-item-group left-section !justify-center flex flex-col">
+                    {renderDetailItem(details.UV, 'UV')}
+                </div>
 
-    // 2. 미세먼지 & 습도 카드
-    if (type === 'DUST_HUMIDITY') {
-        return (
-            <div className="detail-card-container">
-                
-                {/* [왼쪽] 미세먼지 */}
-                <div className="detail-item-group left-section !justify-center flex flex-col">
-                    {renderDetailItem(DUMMY_DETAILS.DUST, 'DUST')}
-                </div>
+                {/* [오른쪽] 풍속 */}
+                <div className="detail-item-group right-section !justify-center flex flex-col">
+                    {renderDetailItem(details.WIND, 'WIND')}
+                </div>
+            </div>
+        );
+    }
 
-                {/* [오른쪽] 습도 */}
-                <div className="detail-item-group right-section !justify-center flex flex-col">
-                    {renderDetailItem(DUMMY_DETAILS.HUMIDITY, 'HUMIDITY')}
-                </div>
-            </div>
-        );
-    }
+    // 2. 미세먼지 & 습도 카드
+    if (type === 'DUST_HUMIDITY') {
+        return (
+            <div className="detail-card-container">
+                
+                {/* [왼쪽] 미세먼지 */}
+                <div className="detail-item-group left-section !justify-center flex flex-col">
+                    {renderDetailItem(details.DUST, 'DUST')}
+                </div>
 
-    return null;
+                {/* [오른쪽] 습도 */}
+                <div className="detail-item-group right-section !justify-center flex flex-col">
+                    {renderDetailItem(details.HUMIDITY, 'HUMIDITY')}
+                </div>
+            </div>
+        );
+    }
+
+    return null;
 }
