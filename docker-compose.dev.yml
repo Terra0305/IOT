@@ -1,0 +1,62 @@
+version: '3.8'
+
+services:
+  front:
+    build:
+      context: ./Front
+      dockerfile: Dockerfile.dev
+    container_name: weather-front
+    ports:
+      - '5173:5173'
+    volumes:
+      - ./Front:/app
+      - /app/node_modules
+    restart: always
+    networks:
+      - weather-network
+    depends_on:
+      - api
+
+  api:
+    build:
+      context: ./BackEnd
+      dockerfile: Dockerfile.dev
+    container_name: weather-api
+    ports:
+      - '8000:8000'
+    volumes:
+      - ./BackEnd:/app # 소스 코드 실시간 반영을 위한 볼륨 마운트
+    env_file:
+      - .env # [핵심] .env 파일의 내용을 환경 변수로 주입
+    depends_on:
+      db:
+        condition: service_healthy
+
+    restart: always
+    networks:
+      - weather-network
+
+  db:
+    image: postgres:15-alpine
+    container_name: weather-db
+    env_file:
+      - .env # DB 컨테이너도 같은 변수(USER, PASSWORD 등)를 공유
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: always
+    networks:
+      - weather-network
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
+
+networks:
+  weather-network:
+    driver: bridge

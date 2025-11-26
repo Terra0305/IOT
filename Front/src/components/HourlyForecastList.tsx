@@ -33,6 +33,16 @@ const createDummyData = (): HourlyData[] => {
 
 const DUMMY_HOURLY_DATA: HourlyData[] = createDummyData();
 
+const getIconCode = (pty: number, sky: number): string => {
+    if (pty > 0) {
+        if (pty === 1 || pty === 4) return "rain";
+        if (pty === 2 || pty === 3) return "snow";
+    }
+    if (sky === 1) return "sun";
+    if (sky === 3) return "cloud_sun";
+    return "cloud";
+};
+
 
 export default function HourlyForecastList() {
     // [수정!] 초기값은 DUMMY_HOURLY_DATA로 설정합니다.
@@ -40,16 +50,21 @@ export default function HourlyForecastList() {
     
     // API 호출 로직 (Daily Forecast API 호출)
     useEffect(() => {
-        const baseUrl = import.meta.env.VITE_APP_API_URL || 'http://localhost:8080';
+        const baseUrl = import.meta.env.VITE_APP_API_URL || 'http://localhost:8000';
         // 백엔드의 24시간 예보 API 주소 (Daily)
-        const apiUrl = `${baseUrl}/weather/daily`; 
+        const apiUrl = `${baseUrl}/api/weather/daily`; 
 
-        axios.get<HourlyData[]>(apiUrl)
+        axios.get(apiUrl)
             .then(response => {
                 // API에서 24시간 데이터를 성공적으로 받아오면 업데이트합니다.
                 if (response.data && response.data.length > 0) {
                     // 데이터 구조가 다르다면 여기에 매핑 로직을 추가해야 합니다.
-                    setHourlyData(response.data); 
+                    const mappedData: HourlyData[] = response.data.map((item: any) => ({
+                        time: item.base_time.substring(0, 2) + ":00", // "1200" -> "12:00"
+                        temperature: item.temperature,
+                        icon_code: getIconCode(item.precip_type, item.sky_code) // Helper needed
+                    }));
+                    setHourlyData(mappedData); 
                 }
             })
             .catch(err => {

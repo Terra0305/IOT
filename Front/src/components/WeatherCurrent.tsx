@@ -49,6 +49,23 @@ const getIconConditionCode = (sky: string, pty: string, isNight: boolean): Weath
     return sky === '맑음' ? 'sun' : 'cloud';
 };
 
+// Helper functions for mapping backend codes to frontend strings
+const getSkyState = (skyCode: string, ptyCode: string): string => {
+    if (ptyCode !== "0") return "흐림"; // 비/눈 오면 흐림 처리
+    if (skyCode === "1") return "맑음";
+    if (skyCode === "3") return "구름 많음";
+    if (skyCode === "4") return "흐림";
+    return "맑음";
+};
+
+const getPtyState = (ptyCode: string): string => {
+    if (ptyCode === "1") return "비";
+    if (ptyCode === "2") return "눈/비";
+    if (ptyCode === "3") return "눈";
+    if (ptyCode === "4") return "소나기";
+    return "없음";
+};
+
 // --- 비상용 가짜 데이터 (유지) ---
 const DUMMY_DATA: WeatherData = {
     location: "광주광역시",
@@ -67,23 +84,36 @@ const WeatherCurrent: React.FC = () => {
     
     // [핵심 수정] 테마 클래스 설정 로직 강화
     useEffect(() => {
-        const baseUrl = import.meta.env.VITE_APP_API_URL || 'http://localhost:8080'; 
-        const apiUrl = `${baseUrl}/weather/current`;
+        const baseUrl = import.meta.env.VITE_APP_API_URL || 'http://localhost:8000'; 
+        const apiUrl = `${baseUrl}/api/weather/current`;
         
         // 데이터 요청
-        axios.get<WeatherData>(apiUrl)
+        axios.get(apiUrl)
             .then(response => {
-                if (response.data && response.data.current_temp !== undefined) {
-                    setWeatherData(response.data); 
+                const data = response.data;
+                if (data && data.weather) {
+                    const weather = data.weather;
+                    // 백엔드 응답 매핑
+                    const mappedData: WeatherData = {
+                        location: "광주광역시", // 현재 위치 고정 (추후 API에서 받아오거나 설정)
+                        current_temp: parseFloat(weather.T1H || "0"),
+                        high_temp: 0, // 현재 API에는 최고/최저 정보가 없음 (일단 0)
+                        low_temp: 0,
+                        timestamp: new Date().toISOString(),
+                        sky_value: getSkyState(weather.SKY, weather.PTY),
+                        pty_value: getPtyState(weather.PTY)
+                    };
+
+                    setWeatherData(mappedData); 
                     
                     // [API 성공 시] 테마 적용
-                    const themeClass = getThemeClassFromData(response.data.sky_value, response.data.pty_value, response.data.timestamp);
+                    const themeClass = getThemeClassFromData(mappedData.sky_value, mappedData.pty_value, mappedData.timestamp);
                     document.body.className = themeClass; 
                 }
             })
             .catch((err) => {
                 // API 실패 시, 더미 데이터를 사용하지만 테마는 더미 데이터 기준으로 설정
-                console.log("현재 날씨 API 연결 실패. 더미 데이터를 사용합니다.");
+                console.log("현재 날씨 API 연결 실패. 더미 데이터를 사용합니다.", err);
                 
                 // [API 실패 시] 더미 데이터 기준으로 테마 적용
                 const themeClass = getThemeClassFromData(DUMMY_DATA.sky_value, DUMMY_DATA.pty_value, DUMMY_DATA.timestamp);
