@@ -1,6 +1,6 @@
 # IOT
-백그라운드 빌드 및 실행 명령어
-docker compose -f docker-compose.dev.yml up -d --build
+빌드 및 실행 명령어
+docker compose -f docker-compose.dev.yml up --build
 
 컨테이너 종료 및 삭제 명령어
 docker compose -f docker-compose.dev.yml down

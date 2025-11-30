@@ -185,6 +185,7 @@ async def log_daily_weather(nx: int = 60, ny: int = 127, db: Session = Depends(g
                 existing.wind_direction = float(vals.get("VEC", 0))
                 existing.wind_ew = float(vals.get("UUU", 0))
                 existing.wind_ns = float(vals.get("VVV", 0))
+                existing.sky_code = int(vals.get("SKY", 0))
                 
                 count += 1
             

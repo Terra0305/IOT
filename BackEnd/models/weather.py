@@ -24,6 +24,7 @@ class HourlyForecast(Base):
     wind_direction = Column(Float, comment="풍향 (VEC) deg")
     wind_ew = Column(Float, comment="동서바람성분 (UUU) m/s")
     wind_ns = Column(Float, comment="남북바람성분 (VVV) m/s")
+    sky_code = Column(Integer, comment="하늘상태 (SKY) 코드")
 
     def __repr__(self):
         return f"<Hourly {self.base_date} {self.base_time} ({self.nx}, {self.ny})>"

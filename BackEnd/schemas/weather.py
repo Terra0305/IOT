@@ -19,6 +19,7 @@ class HourlyForecastBase(BaseModel):
     wind_direction: Optional[float] = None
     wind_ew: Optional[float] = None
     wind_ns: Optional[float] = None
+    sky_code: Optional[int] = None
 
 class HourlyForecastCreate(HourlyForecastBase):
     pass
