@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Dashboard from './pages/Dashboard.tsx';
 import './App.css';
 import './styles/variables.css';
@@ -8,7 +8,7 @@ const getThemeClass = (isDay: boolean) => {
 };
 
 function App() {
-  const [isDayTime, setIsDayTime] = useState<boolean>(true);
+  const [isDayTime] = useState<boolean>(true);
   const themeClass = getThemeClass(isDayTime);
 
   return (

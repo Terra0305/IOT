@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
 import WeatherIcon, { type WeatherConditionKey } from './WeatherIcon';
 
@@ -62,7 +62,7 @@ export default function WeeklyForecastList() {
   const [weeklyData, setWeeklyData] = useState<WeeklyData[]>([]);
 
   useEffect(() => {
-    const baseUrl = import.meta.env.VITE_APP_API_URL || 'http://localhost:8000';
+    const baseUrl = import.meta.env.VITE_APP_API_URL ?? 'http://localhost:8000';
     axios.get(`${baseUrl}/api/weather/weekly`)
       .then(response => {
         if (response.data) {

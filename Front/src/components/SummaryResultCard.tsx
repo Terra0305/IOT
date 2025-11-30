@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
 
 // --- [Type Definition] 데이터 타입 정의 ---
@@ -136,7 +136,7 @@ export default function SummaryResultCard() {
     const [weatherData, setWeatherData] = useState<WeatherData>(DUMMY_WEATHER_DATA);
 
     useEffect(() => {
-        const baseUrl = import.meta.env.VITE_APP_API_URL || 'http://localhost:8000';
+        const baseUrl = import.meta.env.VITE_APP_API_URL ?? 'http://localhost:8000';
 
         const fetchData = async () => {
             try {

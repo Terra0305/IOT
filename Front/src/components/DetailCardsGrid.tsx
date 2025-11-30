@@ -1,4 +1,4 @@
-import React, { type ReactNode, useEffect, useState } from 'react';
+import { type ReactNode, useEffect, useState } from 'react';
 import axios from 'axios';
 
 interface DetailCardsGridProps {
@@ -62,8 +62,7 @@ const renderDetailItem = (data: DetailItem, type: 'UV' | 'WIND' | 'DUST' | 'HUMI
     // 사용자 설정 크기 클래스를 함수 내부에 정의
 
     const titleClass = "text-[50px] font-bold text-white/90";
-    const valueClass = "card-value-display mb-6";
-    const statusClass = "card-detail-status mb-1";
+
     const descriptionClass = "card-secondary-status";
 
     // 개별 간격 유지를 위한 클래스 복구 (renderDetailItem 함수 내부로 이동)
@@ -162,7 +161,7 @@ export default function DetailCardsGrid({ type }: DetailCardsGridProps) {
     const [details, setDetails] = useState<Record<string, DetailItem>>(DUMMY_DETAILS);
 
     useEffect(() => {
-        const baseUrl = import.meta.env.VITE_APP_API_URL || 'http://localhost:8000';
+        const baseUrl = import.meta.env.VITE_APP_API_URL ?? 'http://localhost:8000';
 
         // 공통: 현재 날씨 (Wind, Humidity) 가져오기
         const fetchCurrentWeather = () => {

@@ -84,7 +84,7 @@ const WeatherCurrent: React.FC = () => {
 
     // [핵심 수정] 테마 클래스 설정 로직 강화
     useEffect(() => {
-        const baseUrl = import.meta.env.VITE_APP_API_URL || 'http://localhost:8000';
+        const baseUrl = import.meta.env.VITE_APP_API_URL ?? 'http://localhost:8000';
         const apiUrl = `${baseUrl}/api/weather/current`;
 
         // 데이터 요청
@@ -139,18 +139,7 @@ const WeatherCurrent: React.FC = () => {
     const isNight = isItNightTime(timestamp);
     const iconCondition = getIconConditionCode(sky_value, pty_value, isNight);
 
-    // --- 새로운 Sun SVG (현재 날씨 전용 - 배경 글로우) ---
-    const SunGlowSVG = (
-        <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 128 120" fill="none">
-            <path d="M128 60C128 93.1371 99.3462 120 64 120C28.6538 120 0 93.1371 0 60C0 26.8629 28.6538 0 64 0C99.3462 0 128 26.8629 128 60Z" fill="url(#paint0_radial_66_92)" fillOpacity="0.8" />
-            <defs>
-                <radialGradient id="paint0_radial_66_92" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(64 60) rotate(90) scale(83.5135 89.0811)">
-                    <stop stopColor="#FFD88B" />
-                    <stop offset="1" stopColor="#FFA900" />
-                </radialGradient>
-            </defs>
-        </svg>
-    );
+
 
     return (
         <div className="w-full flex flex-row items-center justify-start gap-20 p-4">

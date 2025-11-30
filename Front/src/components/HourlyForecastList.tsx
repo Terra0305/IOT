@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
 import HourlyItem from './HourlyItem';
 
@@ -65,7 +65,7 @@ export default function HourlyForecastList() {
 
     // API 호출 로직 (Daily Forecast API 호출)
     useEffect(() => {
-        const baseUrl = import.meta.env.VITE_APP_API_URL || 'http://localhost:8000';
+        const baseUrl = import.meta.env.VITE_APP_API_URL ?? 'http://localhost:8000';
         // 백엔드의 24시간 예보 API 주소 (Daily)
         const apiUrl = `${baseUrl}/api/weather/daily`;
 

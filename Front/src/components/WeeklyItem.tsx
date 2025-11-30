@@ -16,57 +16,57 @@ interface WeeklyItemProps {
 
 // 2. [TypeScript] 컴포넌트에 타입 적용 (React.FC<WeeklyItemProps>)
 const WeeklyItem: React.FC<WeeklyItemProps> = ({ day, icon, tempLow, tempHigh, weeklyMin, weeklyMax }) => {
-    
+
     // 3. [Logic Fix] 막대 바 길이 및 위치 계산 (변수 중복 선언 해결)
     // (이전 코드에서 중복 선언되었던 부분을 하나로 통합했습니다.)
-    
-    const range = weeklyMax - weeklyMin; 
-    const barLength = tempHigh - tempLow; 
-    const barOffset = tempLow - weeklyMin; 
-    
+
+    const range = weeklyMax - weeklyMin;
+    const barLength = tempHigh - tempLow;
+    const barOffset = tempLow - weeklyMin;
+
     // 0으로 나누기 방지 (안전장치)
-    const validRange = range > 0 ? range : 1; 
+    const validRange = range > 0 ? range : 1;
 
     // 백분율 계산
     const widthPercent = (barLength / validRange) * 100;
     const offsetPercent = (barOffset / validRange) * 100;
 
     return (
-        <div className="weekly-item-container"> 
-            
+        <div className="weekly-item-container">
+
             {/* 1. 요일 텍스트 */}
             <div className="day-of-week-text">
-                {day} 
+                {day}
             </div>
 
             {/* 2. 날씨 아이콘 */}
             <div className="weekly-weather-icon">
-                <WeatherIcon condition={icon} size={40} />
+                <WeatherIcon condition={icon} width={40} height={40} />
             </div>
-            
+
             {/* 3. 온도 요약 및 막대 바 그룹 */}
             <div className="temp-bar-group">
-                
+
                 {/* 3-1. 최저 온도 */}
                 <div className="temp-low-value">{tempLow}°</div>
 
                 {/* 3-2. 온도 막대 트랙 */}
                 <div className="temp-scale-track">
                     {/* 3-3. 실제 온도 범위 채우기 (동적 스타일 적용) */}
-                    <div 
-                        className="temp-range-fill" 
-                        style={{ 
-                            width: `${widthPercent}%`, 
+                    <div
+                        className="temp-range-fill"
+                        style={{
+                            width: `${widthPercent}%`,
                             left: `${offsetPercent}%` // marginLeft 대신 left 사용 (position: absolute이므로)
-                        }} 
-                    > 
+                        }}
+                    >
                     </div>
                 </div>
 
                 {/* 3-4. 최고 온도 */}
                 <div className="temp-high-value">{tempHigh}°</div>
-            </div> 
-            
+            </div>
+
         </div>
     );
 };
