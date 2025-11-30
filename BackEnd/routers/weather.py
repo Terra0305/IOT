@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from database import get_db
 from models.weather import HourlyForecast, WeeklyForecast, Dust, UV
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import httpx
 import os
 
@@ -21,6 +21,13 @@ MID_LAND_URL = "http://apis.data.go.kr/1360000/MidFcstInfoService/getMidLandFcst
 MID_TA_URL = "http://apis.data.go.kr/1360000/MidFcstInfoService/getMidTa"
 DUST_URL = "http://apis.data.go.kr/B552584/ArpltnInforInqireSvc/getMsrstnAcctoRltmMesureDnsty"
 UV_URL = "http://apis.data.go.kr/1360000/LivingWthrIdxServiceV4/getUVIdxV4"
+
+def get_kst_now():
+    """
+    현재 시간을 KST(한국 표준시)로 반환
+    - 컨테이너가 UTC일 경우 +9시간
+    """
+    return datetime.now(timezone.utc) + timedelta(hours=9)
 
 def get_vilage_base_time(now: datetime):
     """
@@ -61,7 +68,7 @@ async def get_current_weather(nx: int = 60, ny: int = 74, db: Session = Depends(
     - SKY: 초단기예보 (SRT_FCST)
     - TMX, TMN: DB WeeklyForecast (오늘 날짜)
     """
-    now = datetime.now()
+    now = get_kst_now()
     # 1. Base Time 계산 (초단기실황/예보 공용)
     # 매시 45분 이후에 호출 가능 -> 40분 이전이면 1시간 전 base_time 사용
     if now.minute < 45:
@@ -137,7 +144,7 @@ async def log_daily_weather(nx: int = 60, ny: int = 74, db: Session = Depends(ge
     [Write] 단기예보(24시간) 데이터 수집 및 DB 저장
     - HourlyForecast 테이블 업데이트
     """
-    now = datetime.now()
+    now = get_kst_now()
     base_date, base_time = get_vilage_base_time(now)
     
     print(f"[Daily Log] Requesting VilageFcst for {base_date} {base_time}")
@@ -227,7 +234,7 @@ async def get_daily_weather(nx: int = 60, ny: int = 74, db: Session = Depends(ge
     """
     [Read] 저장된 단기예보 조회
     """
-    now_str = datetime.now().strftime("%Y%m%d")
+    now_str = get_kst_now().strftime("%Y%m%d")
     
     results = db.query(HourlyForecast).filter(
         HourlyForecast.nx == nx,
@@ -250,7 +257,7 @@ async def log_weekly_weather(
     작동 당일 4일차 정보 누락 문제 있음(API문제라 해결 불가)
     작동 이틀차 부터는 정보 공백 사라짐
     """
-    now = datetime.now()
+    now = get_kst_now()
     
     # 1. 단기예보 데이터 가져오기 (Day 0~2)
     # 주간 예보 저장을 위해 Day 0의 오전 데이터(TMN, 0600 날씨 등)가 필요하므로
@@ -366,7 +373,7 @@ async def get_weekly_weather(regId: str = "11F20000", db: Session = Depends(get_
     """
     [Read] 주간 예보 조회
     """
-    now_str = datetime.now().strftime("%Y%m%d")
+    now_str = get_kst_now().strftime("%Y%m%d")
     
     results = db.query(WeeklyForecast).filter(
         WeeklyForecast.regId == regId,
@@ -447,7 +454,7 @@ async def log_uv_info(areaNo: str = "2900000000", db: Session = Depends(get_db))
     - 발표시간: 06시, 18시 (하루 2회)
     - 따라서 요청 시 '오늘 날짜 + 0600'으로 고정해서 요청해야 데이터가 있을 가능성이 높음
     """
-    now = datetime.now()
+    now = get_kst_now()
     # 자외선 지수는 06시, 18시에 발표되므로, 안전하게 오늘 날짜의 06시로 요청
     time_str = now.strftime("%Y%m%d") + "06"
     
