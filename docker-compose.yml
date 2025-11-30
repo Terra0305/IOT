@@ -31,6 +31,21 @@ services:
     networks:
       - weather-network
 
+  scheduler:
+    build:
+      context: ./BackEnd
+      dockerfile: Dockerfile
+    container_name: weather-scheduler
+    command: python run_scheduler.py
+    env_file:
+      - .env
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: always
+    networks:
+      - weather-network
+
   db:
     image: postgres:15-alpine
     container_name: weather-db
