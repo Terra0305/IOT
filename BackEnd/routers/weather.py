@@ -54,7 +54,7 @@ def get_sky_state(sky_code, pty_code):
     return "알수없음"
 
 @router.get("/current")
-async def get_current_weather(nx: int = 60, ny: int = 127, db: Session = Depends(get_db)):
+async def get_current_weather(nx: int = 60, ny: int = 74, db: Session = Depends(get_db)):
     """
     [Read] 현재 날씨 조회 (초단기실황 + 초단기예보 + DB 주간예보)
     - PTY, T1H 등: 초단기실황 (NCST)
@@ -132,7 +132,7 @@ async def get_current_weather(nx: int = 60, ny: int = 127, db: Session = Depends
             raise HTTPException(status_code=500, detail=str(e))
 
 @router.post("/log/daily")
-async def log_daily_weather(nx: int = 60, ny: int = 127, db: Session = Depends(get_db)):
+async def log_daily_weather(nx: int = 60, ny: int = 74, db: Session = Depends(get_db)):
     """
     [Write] 단기예보(24시간) 데이터 수집 및 DB 저장
     - HourlyForecast 테이블 업데이트
@@ -223,7 +223,7 @@ async def log_daily_weather(nx: int = 60, ny: int = 127, db: Session = Depends(g
             raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/daily")
-async def get_daily_weather(nx: int = 60, ny: int = 127, db: Session = Depends(get_db)):
+async def get_daily_weather(nx: int = 60, ny: int = 74, db: Session = Depends(get_db)):
     """
     [Read] 저장된 단기예보 조회
     """
@@ -240,9 +240,9 @@ async def get_daily_weather(nx: int = 60, ny: int = 127, db: Session = Depends(g
 @router.post("/log/weekly")
 async def log_weekly_weather(
     nx: int = 60, 
-    ny: int = 127, 
-    regId: str = "11B00000", 
-    regIdTemp: str = "11B10101", 
+    ny: int = 74, 
+    regId: str = "11F20000", 
+    regIdTemp: str = "11F20501", 
     db: Session = Depends(get_db)
 ):
     """
@@ -362,7 +362,7 @@ async def log_weekly_weather(
         raise HTTPException(status_code=500, detail=f"DB Error: {e}")
 
 @router.get("/weekly")
-async def get_weekly_weather(regId: str = "11B00000", db: Session = Depends(get_db)):
+async def get_weekly_weather(regId: str = "11F20000", db: Session = Depends(get_db)):
     """
     [Read] 주간 예보 조회
     """
@@ -378,7 +378,7 @@ async def get_weekly_weather(regId: str = "11B00000", db: Session = Depends(get_
 # --- Dust (Fine Dust) APIs ---
 
 @router.post("/log/dust")
-async def log_dust_info(stationName: str = "종로구", db: Session = Depends(get_db)):
+async def log_dust_info(stationName: str = "서석동", db: Session = Depends(get_db)):
     """
     [Write] 미세먼지 데이터 수집 및 저장
     - 에어코리아 API (getMsrstnAcctoRltmMesureDnsty)
@@ -428,7 +428,7 @@ async def log_dust_info(stationName: str = "종로구", db: Session = Depends(ge
             raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/dust")
-async def get_dust_info(stationName: str = "종로구", db: Session = Depends(get_db)):
+async def get_dust_info(stationName: str = "서석동", db: Session = Depends(get_db)):
     """
     [Read] 최신 미세먼지 데이터 조회
     """
@@ -440,7 +440,7 @@ async def get_dust_info(stationName: str = "종로구", db: Session = Depends(ge
 # --- UV (Ultraviolet) APIs ---
 
 @router.post("/log/uv")
-async def log_uv_info(areaNo: str = "1100000000", db: Session = Depends(get_db)):
+async def log_uv_info(areaNo: str = "2900000000", db: Session = Depends(get_db)):
     """
     [Write] 자외선 지수 데이터 수집 및 저장
     - 기상청 생활기상지수 API (getUVIdxV4)
@@ -531,7 +531,7 @@ async def log_uv_info(areaNo: str = "1100000000", db: Session = Depends(get_db))
             raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/uv")
-async def get_uv_info(areaNo: str = "1100000000", db: Session = Depends(get_db)):
+async def get_uv_info(areaNo: str = "2900000000", db: Session = Depends(get_db)):
     """
     [Read] 최신 자외선 지수 조회
     """

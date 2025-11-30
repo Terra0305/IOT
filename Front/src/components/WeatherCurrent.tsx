@@ -95,7 +95,7 @@ const WeatherCurrent: React.FC = () => {
                     const weather = data.weather;
                     // 백엔드 응답 매핑
                     const mappedData: WeatherData = {
-                        location: "광주광역시", // 현재 위치 고정 (추후 API에서 받아오거나 설정)
+                        location: "광주광역시 동구 지산동", // 현재 위치 고정 (추후 API에서 받아오거나 설정)
                         current_temp: parseFloat(weather.T1H || "0"),
                         high_temp: weather.TMX || 0,
                         low_temp: weather.TMN || 0,
