@@ -15,6 +15,7 @@ router = APIRouter(
 # API Key & URLs
 WEATHER_API_KEY = os.getenv("WEATHER_API_KEY")
 NCST_URL = "http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getUltraSrtNcst"
+SRT_FCST_URL = "http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getUltraSrtFcst"
 VILAGE_URL = "http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst"
 MID_LAND_URL = "http://apis.data.go.kr/1360000/MidFcstInfoService/getMidLandFcst"
 MID_TA_URL = "http://apis.data.go.kr/1360000/MidFcstInfoService/getMidTa"
@@ -53,13 +54,17 @@ def get_sky_state(sky_code, pty_code):
     return "알수없음"
 
 @router.get("/current")
-async def get_current_weather(nx: int = 60, ny: int = 127):
+async def get_current_weather(nx: int = 60, ny: int = 127, db: Session = Depends(get_db)):
     """
-    [Read] 현재 날씨 조회 (초단기실황 API 직접 호출)
-    - DB 저장 안 함
+    [Read] 현재 날씨 조회 (초단기실황 + 초단기예보 + DB 주간예보)
+    - PTY, T1H 등: 초단기실황 (NCST)
+    - SKY: 초단기예보 (SRT_FCST)
+    - TMX, TMN: DB WeeklyForecast (오늘 날짜)
     """
     now = datetime.now()
-    if now.minute < 10:
+    # 1. Base Time 계산 (초단기실황/예보 공용)
+    # 매시 45분 이후에 호출 가능 -> 40분 이전이면 1시간 전 base_time 사용
+    if now.minute < 45:
         target = now - timedelta(hours=1)
     else:
         target = now
@@ -70,7 +75,7 @@ async def get_current_weather(nx: int = 60, ny: int = 127):
     params = {
         "serviceKey": WEATHER_API_KEY,
         "pageNo": 1,
-        "numOfRows": 1000,
+        "numOfRows": 100,
         "dataType": "JSON",
         "base_date": base_date,
         "base_time": base_time,
@@ -78,24 +83,44 @@ async def get_current_weather(nx: int = 60, ny: int = 127):
         "ny": ny,
     }
 
+    result = {}
+
     async with httpx.AsyncClient() as client:
         try:
-            response = await client.get(NCST_URL, params=params, timeout=10.0)
-            response.raise_for_status()
-            data = response.json()
+            # 2. 초단기실황 (NCST) 호출 -> PTY, T1H, RN1, REH, UUU, VVV, VEC, WSD
+            resp_ncst = await client.get(NCST_URL, params=params, timeout=10.0)
+            resp_ncst.raise_for_status()
+            data_ncst = resp_ncst.json()
+            items_ncst = data_ncst.get("response", {}).get("body", {}).get("items", {}).get("item", [])
             
-            header = data.get("response", {}).get("header", {})
-            if header.get("resultCode") != "00":
-                raise HTTPException(status_code=500, detail=f"기상청 API 에러: {header.get('resultMsg')}")
+            for item in items_ncst:
+                result[item["category"]] = item["obsrValue"]
+
+            # 3. 초단기예보 (SRT_FCST) 호출 -> SKY
+            resp_fcst = await client.get(SRT_FCST_URL, params=params, timeout=10.0)
+            resp_fcst.raise_for_status()
+            data_fcst = resp_fcst.json()
+            items_fcst = data_fcst.get("response", {}).get("body", {}).get("items", {}).get("item", [])
+
+            # 가장 빠른 예보 시간의 SKY 값 찾기
+            # items는 fcstTime, fcstDate 순으로 정렬되어 있다고 가정
+            # SKY 카테고리의 첫 번째 값을 사용
+            for item in items_fcst:
+                if item["category"] == "SKY":
+                    result["SKY"] = item["fcstValue"]
+                    break # 가장 빠른 시간의 SKY만 취함
+
+            # 4. DB에서 오늘 날짜의 최고/최저 기온 조회
+            today_str = now.strftime("%Y%m%d")
+            weekly_row = db.query(WeeklyForecast).filter(WeeklyForecast.fcstDate == today_str).first()
             
-            items = data.get("response", {}).get("body", {}).get("items", {}).get("item", [])
-            
-            result = {}
-            for item in items:
-                cat = item["category"]
-                val = item["obsrValue"]
-                result[cat] = val
-            
+            if weekly_row:
+                result["TMX"] = weekly_row.taMax
+                result["TMN"] = weekly_row.taMin
+            else:
+                result["TMX"] = None
+                result["TMN"] = None
+
             return {
                 "base_date": base_date,
                 "base_time": base_time,

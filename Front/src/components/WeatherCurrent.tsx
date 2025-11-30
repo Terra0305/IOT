@@ -4,13 +4,13 @@ import WeatherIcon, { type WeatherConditionKey } from './WeatherIcon';
 
 // --- [Type Definition] (유지) ---
 interface WeatherData {
-    location: string;
-    current_temp: number;
-    high_temp: number;
-    low_temp: number;
-    timestamp: string;
-    sky_value: string;
-    pty_value: string;
+    location: string;
+    current_temp: number;
+    high_temp: number;
+    low_temp: number;
+    timestamp: string;
+    sky_value: string;
+    pty_value: string;
 }
 
 // --- 헬퍼 함수들 (유지) ---
@@ -26,15 +26,15 @@ const isItNightTime = (timestamp: string): boolean => {
 
 const getThemeClassFromData = (sky: string, pty: string, timestamp: string): string => {
     const isNight = isItNightTime(timestamp);
-    
+
     if (pty !== '없음') {
         if (pty === '눈' || pty === '눈/비') return 'theme-snowy';
-        return isNight ? 'theme-night-rainy' : 'theme-rainy'; 
+        return isNight ? 'theme-night-rainy' : 'theme-rainy';
     }
-    
+
     if (sky === '맑음') return isNight ? 'theme-night-clear' : 'theme-day-clear';
     if (sky === '흐림' || sky === '구름 많음') return isNight ? 'theme-night-cloudy' : 'theme-cloudy';
-    
+
     return 'theme-day-clear';
 };
 
@@ -81,12 +81,12 @@ const DUMMY_DATA: WeatherData = {
 const WeatherCurrent: React.FC = () => {
     // 초기값을 DUMMY_DATA로 설정하여 빈 화면 방지
     const [weatherData, setWeatherData] = useState<WeatherData>(DUMMY_DATA);
-    
+
     // [핵심 수정] 테마 클래스 설정 로직 강화
     useEffect(() => {
-        const baseUrl = import.meta.env.VITE_APP_API_URL || 'http://localhost:8000'; 
+        const baseUrl = import.meta.env.VITE_APP_API_URL || 'http://localhost:8000';
         const apiUrl = `${baseUrl}/api/weather/current`;
-        
+
         // 데이터 요청
         axios.get(apiUrl)
             .then(response => {
@@ -97,32 +97,32 @@ const WeatherCurrent: React.FC = () => {
                     const mappedData: WeatherData = {
                         location: "광주광역시", // 현재 위치 고정 (추후 API에서 받아오거나 설정)
                         current_temp: parseFloat(weather.T1H || "0"),
-                        high_temp: 0, // 현재 API에는 최고/최저 정보가 없음 (일단 0)
-                        low_temp: 0,
+                        high_temp: weather.TMX || 0,
+                        low_temp: weather.TMN || 0,
                         timestamp: new Date().toISOString(),
                         sky_value: getSkyState(weather.SKY, weather.PTY),
                         pty_value: getPtyState(weather.PTY)
                     };
 
-                    setWeatherData(mappedData); 
-                    
+                    setWeatherData(mappedData);
+
                     // [API 성공 시] 테마 적용
                     const themeClass = getThemeClassFromData(mappedData.sky_value, mappedData.pty_value, mappedData.timestamp);
-                    document.body.className = themeClass; 
+                    document.body.className = themeClass;
                 }
             })
             .catch((err) => {
                 // API 실패 시, 더미 데이터를 사용하지만 테마는 더미 데이터 기준으로 설정
                 console.log("현재 날씨 API 연결 실패. 더미 데이터를 사용합니다.", err);
-                
+
                 // [API 실패 시] 더미 데이터 기준으로 테마 적용
                 const themeClass = getThemeClassFromData(DUMMY_DATA.sky_value, DUMMY_DATA.pty_value, DUMMY_DATA.timestamp);
-                document.body.className = themeClass; 
+                document.body.className = themeClass;
             });
-            
+
         // 컴포넌트가 마운트될 때, 초기 더미 데이터 기준으로 한번 테마를 설정합니다.
         const initialThemeClass = getThemeClassFromData(DUMMY_DATA.sky_value, DUMMY_DATA.pty_value, DUMMY_DATA.timestamp);
-        document.body.className = initialThemeClass; 
+        document.body.className = initialThemeClass;
 
     }, []);
 
@@ -131,67 +131,67 @@ const WeatherCurrent: React.FC = () => {
     if (!weatherData) return <div className="text-white text-center p-10">날씨 로딩 중... ⏳</div>;
 
 
-    const { 
-        location, 
+    const {
+        location,
         current_temp, high_temp, low_temp, timestamp, sky_value, pty_value
     } = weatherData;
 
     const isNight = isItNightTime(timestamp);
-    const iconCondition = getIconConditionCode(sky_value, pty_value, isNight); 
-    
+    const iconCondition = getIconConditionCode(sky_value, pty_value, isNight);
+
     // --- 새로운 Sun SVG (현재 날씨 전용 - 배경 글로우) ---
     const SunGlowSVG = (
         <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 128 120" fill="none">
-          <path d="M128 60C128 93.1371 99.3462 120 64 120C28.6538 120 0 93.1371 0 60C0 26.8629 28.6538 0 64 0C99.3462 0 128 26.8629 128 60Z" fill="url(#paint0_radial_66_92)" fillOpacity="0.8"/>
-          <defs>
-            <radialGradient id="paint0_radial_66_92" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(64 60) rotate(90) scale(83.5135 89.0811)">
-              <stop stopColor="#FFD88B"/>
-              <stop offset="1" stopColor="#FFA900"/>
-            </radialGradient>
-          </defs>
+            <path d="M128 60C128 93.1371 99.3462 120 64 120C28.6538 120 0 93.1371 0 60C0 26.8629 28.6538 0 64 0C99.3462 0 128 26.8629 128 60Z" fill="url(#paint0_radial_66_92)" fillOpacity="0.8" />
+            <defs>
+                <radialGradient id="paint0_radial_66_92" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(64 60) rotate(90) scale(83.5135 89.0811)">
+                    <stop stopColor="#FFD88B" />
+                    <stop offset="1" stopColor="#FFA900" />
+                </radialGradient>
+            </defs>
         </svg>
     );
 
     return (
         <div className="w-full flex flex-row items-center justify-start gap-20 p-4">
-                
-                {/* === 1. 메인 아이콘 영역 (왼쪽) === */}
-                {/* w-[180px] h-[180px]와 같은 고정 크기 제거됨 (너비 복구) */}
-                <div className="relative flex items-center justify-center"> 
-                    
-                    {/* 1-1. 글로우 효과 (광선) */}
-                    {/* ... (광선 코드) ... */}
-                    
-                    {/* 1-2. 메인 아이콘 (겹침 문제 유발 요소 없음) */}
-                    <div className="relative z-10">
-                        <WeatherIcon 
-                            condition={iconCondition} 
-                            className="drop-shadow-2xl" 
-                            width={300}   
-                            height={200} 
+
+            {/* === 1. 메인 아이콘 영역 (왼쪽) === */}
+            {/* w-[180px] h-[180px]와 같은 고정 크기 제거됨 (너비 복구) */}
+            <div className="relative flex items-center justify-center">
+
+                {/* 1-1. 글로우 효과 (광선) */}
+                {/* ... (광선 코드) ... */}
+
+                {/* 1-2. 메인 아이콘 (겹침 문제 유발 요소 없음) */}
+                <div className="relative z-10">
+                    <WeatherIcon
+                        condition={iconCondition}
+                        className="drop-shadow-2xl"
+                        width={300}
+                        height={200}
                     />
                 </div>
             </div>
 
             {/* === 2. 텍스트 정보 (오른쪽) === */}
             <div className="flex flex-col items-start text-white drop-shadow-lg">
-                
+
                 {/* 위치 */}
                 <p className="text-[40px] font-medium pl-2 opacity-90 mb-[20px]">
                     {location}
                 </p>
-                
+
                 {/* 현재 온도 */}
                 <h1 className="text-[120px] font-bold leading-none -ml-2">
                     {current_temp}°
                 </h1>
-                
+
                 {/* 최고/최저 온도 */}
                 <p className="text-[39px] font-medium pl-2 opacity-90 mt-[30px]">
                     H: {high_temp}°  L: {low_temp}°
                 </p>
             </div>
-            
+
         </div>
     );
 }
