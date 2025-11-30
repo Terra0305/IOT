@@ -49,14 +49,13 @@ const getDayName = (dateStr: string): string => {
     parseInt(dateStr.substring(4, 6)) - 1,
     parseInt(dateStr.substring(6, 8))
   );
-  const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   const today = new Date();
 
   // 오늘 날짜 확인
   if (date.getDate() === today.getDate() && date.getMonth() === today.getMonth()) {
     return "Today";
   }
-  return days[date.getDay()];
+  return `${date.getMonth() + 1}.${date.getDate()}`;
 };
 
 export default function WeeklyForecastList() {
