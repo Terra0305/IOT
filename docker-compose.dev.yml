@@ -35,7 +35,20 @@ services:
     restart: always
     networks:
       - weather-network
-
+  scheduler:
+    build:
+      context: ./BackEnd
+      dockerfile: Dockerfile
+    container_name: weather-scheduler
+    command: python run_scheduler.py
+    env_file:
+      - .env
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: always
+    networks:
+      - weather-network
   db:
     image: postgres:15-alpine
     container_name: weather-db
@@ -49,13 +62,14 @@ services:
     networks:
       - weather-network
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}']
+      test: [ 'CMD-SHELL', 'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}' ]
       interval: 5s
       timeout: 5s
       retries: 5
 
 volumes:
   postgres_data:
+
 
 networks:
   weather-network:
