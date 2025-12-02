@@ -49,6 +49,8 @@ services:
     restart: always
     networks:
       - weather-network
+    devices:
+      - /dev/gpiomem:/dev/gpiomem
   db:
     image: postgres:15-alpine
     container_name: weather-db
