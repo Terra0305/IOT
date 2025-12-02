@@ -9,6 +9,9 @@ WORKDIR /app
 # 3. requirements.txt를 먼저 복사하여 종속성 캐싱 활용
 COPY requirements.txt .
 
+# 3.5. RPi.GPIO 등 컴파일이 필요한 패키지를 위해 gcc 설치
+RUN apt-get update && apt-get install -y gcc && rm -rf /var/lib/apt/lists/*
+
 # 4. 패키지 설치
 RUN pip install --no-cache-dir -r requirements.txt
 
